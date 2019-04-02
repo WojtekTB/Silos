@@ -15,6 +15,6 @@ function draw(){
 function keyPressed(){
   if(keyCode = ' ')
   {
-    console.log(" ");
+    console.log("pressed space");
   }
 }
