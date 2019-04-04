@@ -20,4 +20,7 @@ function keyPressed(){
   if (key == ' '){
     player.jump();
   }
+  else if (key == 's'){
+    player.crouch();
+  }
 }
