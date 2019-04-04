@@ -9,8 +9,8 @@ class Player{
     this.overallVelocity = 0;//total force acting on sprite
     this.gravity = 0.5;//downward pull
     //-----sprite-----
-    this.spriteHeight = 50;
-    this.spriteWidth = 30;
+    this.spriteHeight = 100;
+    this.spriteWidth = 50;
     //-----player-statuses-----
     this.crouched = 0;//[0 = standing; 1 = crouching] => start off standing
     this.maxJumps = 2;//constant max number of jumps to reset to
