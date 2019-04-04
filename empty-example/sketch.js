@@ -1,20 +1,23 @@
 var screenX = window.innerWidth;
 var screenY = window.innerHeight - 20;
+var floor = screenY - 30;
+var player;
 
 
 function setup() {
   createCanvas(screenX, screenY);
+  player = new Player(screenX/2, screenY/2);
 }
 
 function draw(){
   // put drawing code here
-  background(`rgb(255, 255, 0)`);
-  rect(10, 10, 30, 30);
+  background(50);
+  player.show();
+  player.update();
 }
 
 function keyPressed(){
-  if(keyCode = ' ')
-  {
-    console.log("pressed space");
+  if (key == ' '){
+    player.jump();
   }
 }
