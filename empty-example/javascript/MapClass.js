@@ -1,22 +1,16 @@
 class Map{
-  constructor(assets){
-    this.mapTiles = [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ];
-    this.columns = this.mapTiles[0].length;
-    this.rows = this.mapTiles.length;
-    this.brickTexture = assets[0];
-    this.scale = screenY/this.rows;
+  constructor(mapTiles, assets, scale){
+    this.mapTiles = mapTiles;//arrays of arrays of map tiles with 1s and 0s
+    this.columns = this.mapTiles[0].length;//get number of columns that map makes up
+    this.rows = this.mapTiles.length;//get number of rows in the map
+    this.brickTexture = assets.brick;//get the brick texture from the
+    this.scale = scale/this.rows;
   }
 
+
+  getScale(){
+    return this.scale;
+  }
   show(){
     for(let columnNumber = 0; columnNumber < this.rows; columnNumber++){
       for(let rowPosition = 0; rowPosition < this.columns; rowPosition++){
@@ -25,6 +19,5 @@ class Map{
         }
       }
     }
-    console.log(this.columns, this.rows);
   }
 }
