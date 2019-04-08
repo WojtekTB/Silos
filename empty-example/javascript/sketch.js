@@ -11,14 +11,16 @@ var images = {
 };
 
 var mapTiles = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
@@ -30,7 +32,8 @@ function preload(){
 function setup() {
   createCanvas(screenX, screenY);
   map1 = new Map(mapTiles, images, mapScale);
-  player = new Player(screenX/2, screenY/2, map1, images.player);
+  player = new Player(180, 700, map1, images.player);
+  frameRate(60);
 }
 
 function draw(){
@@ -39,22 +42,19 @@ function draw(){
   map1.show();
   player.update();
   player.show();
-  fill(`rgb(255, 0, 0)`);
-  rect(player.collisionPointBottom.cpx, player.collisionPointBottom.cpy, 3, 3);//mid
-  rect(player.collisionPointBottomRight.cpx, player.collisionPointBottomRight.cpy, 3, 3);//right
-  rect(player.collisionPointBottomLeft.cpx, player.collisionPointBottomLeft.cpy, 3, 3);//left
+  noStroke();
 
-  for(i = 0; i < player.bottomCollisionArrayX.length; i++){
-    rect(player.bottomCollisionArrayX[i], player.collisionPointBottom.cpy, 3, 3);
+
+  for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
+    fill(`rgb(255, 0, 0)`);
+    rect(player.playerCollisionPointsBottom[i].x, player.playerCollisionPointsBottom[i].y, 2, 2);
+    fill(`rgb(255, 0, 255)`);
+    rect(player.playerCollisionPointsSideR[i].x, player.playerCollisionPointsSideR[i].y, 2, 2);
+    fill(`rgb(0, 255, 0)`);
+    rect(player.playerCollisionPointsSideL[i].x, player.playerCollisionPointsSideL[i].y, 2, 2);
   }
-  fill(`rgb(0, 0, 255)`);
-  for(i = 0; i < player.rightCollisionArrayY.length; i++){
-    rect(player.collisionPointBottomLeft.cpx + player.spriteWidth, player.rightCollisionArrayY[i], 3, 3);
-  }
-  fill(`rgb(0, 255, 0)`);
-  for(i = 0; i < player.leftCollisionArrayY.length; i++){
-    rect(player.collisionPointBottomLeft.cpx, player.leftCollisionArrayY[i], 3, 3);
-  }
+
+  // rect(player.x - player.spriteWidth/2, player.y, player.spriteWidth, 2);
 
 }
 
@@ -62,7 +62,11 @@ function keyPressed(){
   if (key == ' '){
     player.jump();
   }
-  else if (key == 's' || keyCode == DOWN_ARROW){
+  if (key == 's' || keyCode == DOWN_ARROW){
     player.crouch();
+  }
+  if(key == 'z')
+  {
+    player.moveToClick();
   }
 }
