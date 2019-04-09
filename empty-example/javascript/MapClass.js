@@ -5,19 +5,23 @@ class Map{
     this.rows = this.mapTiles.length;//get number of rows in the map
     this.brickTexture = assets.brick;//get the brick texture from the
     this.scale = scale/this.rows;
+    this.y = 0;
+    this.x = 0;
   }
 
-
-  getScale(){
-    return this.scale;
-  }
   show(){
     for(let columnNumber = 0; columnNumber < this.rows; columnNumber++){
       for(let rowPosition = 0; rowPosition < this.columns; rowPosition++){
         if(this.mapTiles[columnNumber][rowPosition] === 1){
-          image(this.brickTexture, rowPosition*this.scale, columnNumber*this.scale, this.scale, this.scale);
+          image(this.brickTexture, rowPosition*this.scale+this.x, columnNumber*this.scale+this.y, this.scale, this.scale);
         }
       }
     }
   }
+
+  translate(xoffset, yoffset){
+    this.x += xoffset;
+    this.y += yoffset;
+  }
+
 }

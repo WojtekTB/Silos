@@ -11,13 +11,13 @@ var images = {
 };
 
 var mapTiles = [
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
   [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-  [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
   [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -38,7 +38,7 @@ function setup() {
 
 function draw(){
   // put drawing code here
-  background(50);
+  background(`rgb(50, 20, 40)`);
   map1.show();
   player.update();
   player.show();
@@ -48,6 +48,8 @@ function draw(){
   for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
     fill(`rgb(255, 0, 0)`);
     rect(player.playerCollisionPointsBottom[i].x, player.playerCollisionPointsBottom[i].y, 2, 2);
+    fill(`rgb(30, 30, 255)`);
+    rect(player.playerCollisionPointsTop[i].x, player.playerCollisionPointsTop[i].y, 2, 2);
     fill(`rgb(255, 0, 255)`);
     rect(player.playerCollisionPointsSideR[i].x, player.playerCollisionPointsSideR[i].y, 2, 2);
     fill(`rgb(0, 255, 0)`);

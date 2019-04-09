@@ -30,10 +30,12 @@ class Player{
     //-----player collision values-----
     this.numberOfCollisionPointsOnSide = 10;
     this.collisionPointSidePadding = 3;
+    this.playerCollisionPointsTop = [];
     this.playerCollisionPointsBottom = [];
     this.playerCollisionPointsSideR = [];
     this.playerCollisionPointsSideL = [];
     for(let i = 0; i < this.numberOfCollisionPointsOnSide; i++){
+      this.playerCollisionPointsTop.push(new CollisionPoint(null, null));
       this.playerCollisionPointsBottom.push(new CollisionPoint(null, null));
       this.playerCollisionPointsSideR.push(new CollisionPoint(null, null));
       this.playerCollisionPointsSideL.push(new CollisionPoint(null, null));
@@ -52,6 +54,7 @@ class Player{
     if (keyIsDown(LEFT_ARROW) || keyIsDown("A".charCodeAt(0))) {
       this.previousX = this.x;
       this.x -= this.speed;
+
     }
     else if (keyIsDown(RIGHT_ARROW) || keyIsDown("D".charCodeAt(0))) {
       this.previousX = this.x;
@@ -129,6 +132,25 @@ class Player{
     }
   }
 
+  collisionDetectionTop(){
+    let nonBumped = true;
+    for(let i = 0; i < this.numberOfCollisionPointsOnSide; i++){
+      let tileX = Math.floor(this.playerCollisionPointsTop[i].x / this.mapScale);
+      let tileY = Math.floor(this.playerCollisionPointsTop[i].y / this.mapScale);
+      let tilePlayerIsOn = this.mapTiles[tileY][tileX];
+      if(tilePlayerIsOn != 0){
+        this.y = this.previousY;
+        this.overallVelocity = this.gravity;
+        console.log("tile Top!");
+        nonBumped = false;
+        break;
+      }
+    }
+    if(nonBumped){
+      this.previousY = this.y;
+    }
+  }
+
   collisionDetectionBottom(){
     let nonBumped = true;
     for(let i = 0; i < this.numberOfCollisionPointsOnSide; i++){
@@ -149,20 +171,6 @@ class Player{
     }
   }
 
-    // let tileX = Math.floor(this.playerCollisionPointsBottom.x / this.mapScale);
-    // let tileY = Math.floor(this.playerCollisionPointsBottom.y / this.mapScale);
-    // let tilePlayerIsOn = this.mapTiles[tileY][tileX];
-    // if(tilePlayerIsOn != 0){
-    //   this.y = this.previousY;
-    //   this.overallVelocity = 0;
-    //   this.jumpNumber = this.maxJumps;
-    //   console.log("tile Under!");
-    // }
-    // else{
-    //   this.previousY = this.y;
-    // }
-
-
   collisionPointsUpdate(){
     this.playerCollisionPointsSideR[0].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding;
     this.playerCollisionPointsSideR[0].y = (this.y - this.spriteHeight/2) + this.collisionPointSidePadding;//right
@@ -170,9 +178,15 @@ class Player{
     this.playerCollisionPointsSideL[0].x = this.x - this.spriteWidth/2 - this.collisionPointSidePadding;
     this.playerCollisionPointsSideL[0].y = (this.y - this.spriteHeight/2) + this.collisionPointSidePadding;//left
 
+    this.playerCollisionPointsTop[0].x = (this.x - this.spriteWidth/2) + this.collisionPointSidePadding;
+    this.playerCollisionPointsTop[0].y = this.y - this.spriteHeight/2;
+
     this.playerCollisionPointsBottom[0].x = (this.x - this.spriteWidth/2) + this.collisionPointSidePadding;
     this.playerCollisionPointsBottom[0].y = this.y + this.spriteHeight/2;
     for(let i = 1; i < this.numberOfCollisionPointsOnSide; i++){
+      this.playerCollisionPointsTop[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
+      this.playerCollisionPointsTop[i].y = this.y - this.spriteHeight/2;
+
       this.playerCollisionPointsBottom[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
       this.playerCollisionPointsBottom[i].y = this.y + this.spriteHeight/2;
 
@@ -195,6 +209,7 @@ class Player{
       this.y += this.overallVelocity/this.stepsPerFrame;
       this.collisionPointsUpdate();
       this.collisionDetectionBottom();
+      this.collisionDetectionTop();
       this.collisionDetectionSide();
     }
 
