@@ -212,6 +212,7 @@ class Player{
       this.collisionDetectionTop();
       this.collisionDetectionSide();
     }
+    this.map.adjustTo(this.x, this.y);
 
     // this.y += this.overallVelocity;
     // this.collisionPointsUpdate();

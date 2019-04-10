@@ -24,8 +24,8 @@ class Map{
     this.y += yoffset;
   }
 
-  adjustTo(x, y){
-    this.x = x;
-    this.y = y;
+  getTileAt(x, y){
+    return this.mapTiles[y][x];
   }
+
 }
