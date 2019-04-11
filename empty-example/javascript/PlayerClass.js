@@ -5,7 +5,8 @@ class Player{
     this.y = startingY;
     this.previousX = this.x;
     this.previousY = this.y;
-    this.previousY2 = this.y;
+    this.xoffset = 0;
+    this.yoffset = 0;
     //-----vectors-----
     this.speed = 5;//walking speed
     this.jumpForce = 10;//jumping force
@@ -97,7 +98,7 @@ class Player{
   show(){//render
     fill(255);
     // rect(this.x - (this.spriteWidth / 2), this.y - (this.spriteHeight / 2), this.spriteWidth, this.spriteHeight);
-    image(this.image, this.x - (this.spriteWidth / 2), this.y - (this.spriteHeight / 2), this.spriteWidth, this.spriteHeight);
+    image(this.image, (this.x - (this.spriteWidth / 2)) + this.xoffset, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
   }
 
   collisionDetectionSide(){
@@ -199,7 +200,15 @@ class Player{
   }
     // this.playerCollisionPointsBottom.x = this.x,
     // this.playerCollisionPointsBottom.y = this.y + this.spriteHeight/2
+translate(x, y){
+  this.xoffset += x;
+  this.yoffset += y;
+}
 
+translateScreen(x, y){
+  this.map.translate(x, y);
+  this.translate(x, y);
+}
 
 
   update(){//update values
@@ -212,7 +221,7 @@ class Player{
       this.collisionDetectionTop();
       this.collisionDetectionSide();
     }
-    this.map.adjustTo(this.x, this.y);
+    // this.map.adjustTo(-this.x, this.y);
 
     // this.y += this.overallVelocity;
     // this.collisionPointsUpdate();
