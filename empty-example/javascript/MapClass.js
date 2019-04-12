@@ -17,7 +17,9 @@ class Map{
     for(let columnNumber = 0; columnNumber < this.rows; columnNumber++){
       for(let rowPosition = 0; rowPosition < this.columns; rowPosition++){
         if(this.mapTiles[columnNumber][rowPosition] === 1){
-          image(this.brickTexture, rowPosition*this.scale+this.x + this.xoffset, columnNumber*this.scale+this.y + this.yoffset, this.scale, this.scale);
+          let drawnX = rowPosition*this.scale + this.xoffset;
+          let drawnY = columnNumber*this.scale + this.yoffset;
+          image(this.brickTexture, drawnX, drawnY, this.scale, this.scale);
         }
       }
     }
