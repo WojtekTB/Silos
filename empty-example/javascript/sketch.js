@@ -41,7 +41,7 @@ function draw(){
   background(100);
   map1.show();
   player.update();
-  player.show();
+  // player.show();
   noStroke();
 
 
