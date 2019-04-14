@@ -25,7 +25,7 @@ var mapTiles = [
 ];
 
 function preload(){
-  images.brick = loadImage('assets/dirt.png');
+  images.brick = loadImage('assets/brick.png');
   images.player = loadImage('assets/yeet.png');
 }
 

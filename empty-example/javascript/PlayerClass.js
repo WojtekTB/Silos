@@ -419,20 +419,8 @@ class Player{
 }
 
   centerOnPlayerX(){
-    // this.map.setXOffset(this.x - screenX/2)
-    //make both the same by calculating the xoffsent through this.x and this.displayX 
-    let changeRate = 1;
-    if(this.displayX > screenX/2)
-    {
-      this.translate(-changeRate, 0);
-      this.map.translate(-changeRate, 0);
-    }
-    else if(this.displayX < screenX/2)
-    {
-      this.translate(changeRate, 0);
-      this.map.translate(changeRate, 0);
-    }
-    console.log(this.xoffset, this.map.xoffset);
+    this.map.setXOffset(-(this.x - (screenX/2)));
+    this.xoffset = -(this.x - (screenX/2));
   }
 
   update(){//update values
