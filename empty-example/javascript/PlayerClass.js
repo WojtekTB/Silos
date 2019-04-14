@@ -15,8 +15,8 @@ class Player{
     this.gravity = 0.5;//downward pull
     this.stepsPerFrame = 5;
     //-------player frictions------
-    this.floorFriction = 3;
-    this.airFriction = 0.3;
+    this.floorFriction = 1;
+    this.airFriction = 0.2;
     //-----sprite-----
     this.spriteHeight = 95;
     this.spriteWidth = 157*(2/3);
@@ -24,9 +24,9 @@ class Player{
     this.image = images;
     //-----player-statuses-----
     this.crouched = 0;//[0 = standing; 1 = crouching] => start off standing
-    this.maxJumps = 2;//constant max number of jumps to reset to
     this.inTheAir = false;
     this.inTheAirChannel = [0, 0, 0];
+    this.maxJumps = 2;//constant max number of jumps to reset to
     this.jumpNumber = this.maxJumps;//number of jumps before having to touch the ground again
     this.onWall = true;
     this.onRightWall = true;
@@ -110,14 +110,15 @@ class Player{
   jump(){//adds upwards force to whatever the value was before
     if(this.jumpNumber != 0)
     {
-      if(this.onWall){
-      // console.log(this.onRightWall);
-        this.wallJump(this.onRightWall);
+      if(this.isNextToB === false && this.isNextToT === false && this.isNextToL === false && this.isNextToR === true){//if on right wall
+        this.wallJump(true);
+      }
+      else if(this.isNextToB === false && this.isNextToT === false && this.isNextToL === true && this.isNextToR === false){//if on right wall
+        this.wallJump(false);
       }
       else{
         this.normalJump();
       }
-      // this.inTheAir = true;
       this.jumpNumber--;
     }
   }
@@ -407,8 +408,7 @@ class Player{
   }
 }
   checkIfInAir(){
-  if(this.inTheAirChannel[0] === 0 && this.inTheAirChannel[1] === 0 && this.inTheAirChannel[2] === 0){
-    // console.log("true");
+    if(this.isNextToB === false && this.isNextToT === false && this.isNextToL === false && this.isNextToR === false){
     this.inTheAir = true;
   }
   else{
@@ -416,6 +416,10 @@ class Player{
     this.inTheAir = false;
   }
 }
+
+  centerOnPlayerX(){
+    this.map.setXOffset(this.x - screenX/2)
+  }
 
   update(){//update values
     this.controlMovement();
@@ -440,6 +444,7 @@ class Player{
       this.overallVelocityY = 0;
       this.jumpNumber = this.maxJumps;
     }
+    // this.centerOnPlayerX();
   }
 
   show(){//render

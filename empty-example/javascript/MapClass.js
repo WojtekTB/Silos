@@ -30,6 +30,10 @@ class Map{
     this.yoffset += yoffset;
   }
 
+  setXOffset(x){
+    this.xoffset = x;
+  }
+
   adjustTo(x, y){
     this.x = x- screenX/4;
     this.y = y - screenY/4;

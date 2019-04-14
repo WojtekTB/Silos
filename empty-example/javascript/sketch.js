@@ -41,7 +41,7 @@ function draw(){
   background(100);
   map1.show();
   player.update();
-  // player.show();
+  player.show();
   noStroke();
 
 
@@ -83,12 +83,12 @@ function keyPressed(){
   }
   if(key == 'p')
   {
-    player.translate(-100, 0);
+    // player.translate(-100, 0);
     map1.translate(-100, 0);
   }
   else if(key == 'o')
   {
-    player.translate(100, 0);
+    // player.translate(100, 0);
     map1.translate(100, 0);
   }
 }
