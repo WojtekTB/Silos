@@ -7,6 +7,7 @@ class Player{
     this.previousY = this.y;
     this.xoffset = 0;
     this.yoffset = 0;
+    this.displayX = this.x + this.xoffset;
     //-----vectors-----
     this.speed = 8;//walking speed force
     this.jumpForce = 10;//jumping force
@@ -20,7 +21,6 @@ class Player{
     //-----sprite-----
     this.spriteHeight = 95;
     this.spriteWidth = 157*(2/3);
-
     this.image = images;
     //-----player-statuses-----
     this.crouched = 0;//[0 = standing; 1 = crouching] => start off standing
@@ -407,6 +407,7 @@ class Player{
     }
   }
 }
+
   checkIfInAir(){
     if(this.isNextToB === false && this.isNextToT === false && this.isNextToL === false && this.isNextToR === false){
     this.inTheAir = true;
@@ -418,7 +419,20 @@ class Player{
 }
 
   centerOnPlayerX(){
-    this.map.setXOffset(this.x - screenX/2)
+    // this.map.setXOffset(this.x - screenX/2)
+    //make both the same by calculating the xoffsent through this.x and this.displayX 
+    let changeRate = 1;
+    if(this.displayX > screenX/2)
+    {
+      this.translate(-changeRate, 0);
+      this.map.translate(-changeRate, 0);
+    }
+    else if(this.displayX < screenX/2)
+    {
+      this.translate(changeRate, 0);
+      this.map.translate(changeRate, 0);
+    }
+    console.log(this.xoffset, this.map.xoffset);
   }
 
   update(){//update values
@@ -438,13 +452,14 @@ class Player{
       this.checkerDetectionTop();
       this.checkerDetectionSide();
     }
+    this.displayX = this.x + this.xoffset;
     this.checkIfInAir();
     if(this.y > screenY - this.spriteHeight){//when character y is at the floor limit
       this.y = screenY - this.spriteHeight;
       this.overallVelocityY = 0;
       this.jumpNumber = this.maxJumps;
     }
-    // this.centerOnPlayerX();
+    this.centerOnPlayerX();
   }
 
   show(){//render

@@ -11,6 +11,7 @@ class Map{
     this.previousY = this.y;
     this.xoffset = 0;
     this.yoffset = 0;
+    this.displayX = this.x + this.xoffset;
   }
 
   show(){
@@ -20,6 +21,7 @@ class Map{
           let drawnX = rowPosition*this.scale + this.xoffset;
           let drawnY = columnNumber*this.scale + this.yoffset;
           image(this.brickTexture, drawnX, drawnY, this.scale, this.scale);
+          this.displayX = this.x + this.xoffset;
         }
       }
     }
