@@ -1,5 +1,5 @@
 class Player{
-  constructor(startingX, startingY, map, images){//initialize object
+  constructor(startingX, startingY, map, images, animationsAndInstructions){//initialize object
     //-----position-----
     this.x = startingX;
     this.y = startingY;
@@ -64,6 +64,14 @@ class Player{
       this.playerCheckerPointsSideR.push(new CollisionPoint(null, null));
       this.playerCheckerPointsSideL.push(new CollisionPoint(null, null));
     }
+
+    //player animation statuses
+    this.playerStateAnimationIdle = false;
+    this.playerStateAnimationWalkingRight = false;
+    this.playerStateAnimationWalkingLeft = false;
+    //animations and animationsAndInstructions
+    this.playerAnimationIdle = animationsAndInstructions[0];
+    this.currentAnimation = [];
   }
 
   moveToClick(){
@@ -75,7 +83,13 @@ class Player{
   }
 
   controlMovement(){//check for key pressed and move if so
-    if (keyIsDown(LEFT_ARROW) || keyIsDown("A".charCodeAt(0))) {
+    if(keyIsDown("X".charCodeAt(0)) && keyIsDown(RIGHT_ARROW)){
+      this.dash(true);
+    }
+    else if(keyIsDown("X".charCodeAt(0)) && keyIsDown(LEFT_ARROW)){
+      this.dash(false);
+    }
+    else if (keyIsDown(LEFT_ARROW) || keyIsDown("A".charCodeAt(0))) {
       this.overallVelocityX -= this.speed/4;
       if(this.overallVelocityX < -this.speed){
         this.overallVelocityX = -this.speed/4;
@@ -421,6 +435,32 @@ class Player{
   centerOnPlayerX(){
     this.map.setXOffset(-(this.x - (screenX/2)));
     this.xoffset = -(this.x - (screenX/2));
+  }
+
+  changeAnimation(){
+    if(this.playerStateAnimationIdle){
+      this.currentAnimation = this.playerAnimationIdle;
+    }
+    else if(this.playerStateAnimationWalkingLeft){
+
+    }
+    else if(this.playerStateAnimationWalkingRight){
+
+    }
+  }
+
+  playAnimation(){
+    
+  }
+
+  dash(right){
+    console.log("dash");
+    if(right){
+      this.overallVelocityX = this.speed * 2;
+    }
+    else{
+      this.overallVelocityX = -this.speed * 2;
+    }
   }
 
   update(){//update values

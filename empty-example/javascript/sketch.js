@@ -3,6 +3,7 @@ var screenY = window.innerHeight - 20;
 var player;
 var map1;
 var mapScale = screenY;
+var animationsAndInstructions = [[], []];
 
 var images = {
   brick: null,
@@ -16,10 +17,10 @@ var mapTiles = [
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
   [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
   [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
@@ -27,12 +28,21 @@ var mapTiles = [
 function preload(){
   images.brick = loadImage('assets/brick.png');
   images.player = loadImage('assets/yeet.png');
+  for(let i = 1;  i < 12; i++){
+    if(i > 9){
+      animationsAndInstructions[0].push(loadImage("assets/idle.sprite/idle00" + i + ".png"));
+    }
+    else{
+      animationsAndInstructions[0].push(loadImage("assets/idle.sprite/idle000" + i + ".png"));
+    }
+  }
+  animationsAndInstructions[1] = [0, 11, idle];
 }
 
 function setup() {
   createCanvas(screenX, screenY);
   map1 = new Map(mapTiles, images, mapScale);
-  player = new Player(screenX/2, 700, map1, images.player);
+  player = new Player(screenX/2, 700, map1, images.player, animations);
   // frameRate(60);
 }
 
