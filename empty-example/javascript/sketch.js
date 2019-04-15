@@ -36,13 +36,13 @@ function preload(){
       animationsAndInstructions[0].push(loadImage("assets/idle.sprite/idle000" + i + ".png"));
     }
   }
-  animationsAndInstructions[1] = [0, 11, idle];
+  animationsAndInstructions[1] = [0, 11, "idle"];
 }
 
 function setup() {
   createCanvas(screenX, screenY);
   map1 = new Map(mapTiles, images, mapScale);
-  player = new Player(screenX/2, 700, map1, images.player, animations);
+  player = new Player(screenX/2, 700, map1, images.player, animationsAndInstructions);
   // frameRate(60);
 }
 

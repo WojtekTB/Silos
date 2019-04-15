@@ -19,8 +19,8 @@ class Player{
     this.floorFriction = 1;
     this.airFriction = 0.2;
     //-----sprite-----
-    this.spriteHeight = 95;
-    this.spriteWidth = 157*(2/3);
+    this.spriteHeight = 115;
+    this.spriteWidth = 61;
     this.image = images;
     //-----player-statuses-----
     this.crouched = 0;//[0 = standing; 1 = crouching] => start off standing
@@ -66,12 +66,15 @@ class Player{
     }
 
     //player animation statuses
-    this.playerStateAnimationIdle = false;
+    this.playerStateAnimationIdle = true;
     this.playerStateAnimationWalkingRight = false;
     this.playerStateAnimationWalkingLeft = false;
     //animations and animationsAndInstructions
     this.playerAnimationIdle = animationsAndInstructions[0];
     this.currentAnimation = [];
+    this.onWhatFrame = 0;
+    this.frameCount = 0;
+    this.framekeeper = 0;
   }
 
   moveToClick(){
@@ -449,8 +452,23 @@ class Player{
     }
   }
 
-  playAnimation(){
-    
+  playAnimation(frame){
+    let speed = 3;
+
+    if(frame === speed)
+    {
+      this.frameCount = 0;
+      if(this.onWhatFrame === this.currentAnimation.length -1 ){
+        this.onWhatFrame = 0;
+      }
+      else{
+        this.onWhatFrame++;
+      }
+      return this.currentAnimation[this.onWhatFrame];
+    }
+    else{
+      return this.currentAnimation[this.onWhatFrame];
+    }
   }
 
   dash(right){
@@ -492,7 +510,13 @@ class Player{
 
   show(){//render
     fill(255);
+    this.changeAnimation();
     // rect(this.x - (this.spriteWidth / 2), this.y - (this.spriteHeight / 2), this.spriteWidth, this.spriteHeight);
-    image(this.image, (this.x - (this.spriteWidth / 2)) + this.xoffset, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+    // image(this.image, (this.x - (this.spriteWidth / 2)) + this.xoffset, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+    // console.log(this.onWhatFrame);
+    // console.log(this.currentAnimation.length);
+    image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+    this.frameCount++;
+    console.log(this.frameCount);
   }
 }
