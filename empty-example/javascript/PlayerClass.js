@@ -67,8 +67,9 @@ class Player{
 
     //player animation statuses
     this.playerStateAnimationIdle = true;
-    this.playerStateAnimationWalkingRight = false;
-    this.playerStateAnimationWalkingLeft = false;
+    this.playerStateAnimationWalking = false;
+    this.playerAnimationRight = false;
+    this.playerAnimationLeft = false;
     //animations and animationsAndInstructions
     this.playerAnimationIdle = animationsAndInstructions[0];
     this.currentAnimation = [];
@@ -97,12 +98,16 @@ class Player{
       if(this.overallVelocityX < -this.speed){
         this.overallVelocityX = -this.speed/4;
       }
+      this.playerAnimationLeft = true;
+      this.playerAnimationRight = false;
     }
     else if (keyIsDown(RIGHT_ARROW) || keyIsDown("D".charCodeAt(0))) {
       this.overallVelocityX += this.speed/4;
       if(this.overallVelocityX > this.speed){
         this.overallVelocityX = this.speed/4;
       }
+      this.playerAnimationLeft = false;
+      this.playerAnimationRight = true;
     }
     else if (keyIsDown("L".charCodeAt(0))) {
       console.table({top: this.isNextToT, bottom: this.isNextToB, left: this.isNextToL, right: this.isNextToR});
@@ -444,10 +449,7 @@ class Player{
     if(this.playerStateAnimationIdle){
       this.currentAnimation = this.playerAnimationIdle;
     }
-    else if(this.playerStateAnimationWalkingLeft){
-
-    }
-    else if(this.playerStateAnimationWalkingRight){
+    else if(this.playerStateAnimationWalking){
 
     }
   }
@@ -515,7 +517,16 @@ class Player{
     // image(this.image, (this.x - (this.spriteWidth / 2)) + this.xoffset, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
     // console.log(this.onWhatFrame);
     // console.log(this.currentAnimation.length);
-    image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+    let offsetThis = 0;
+    if(this.playerAnimationRight){
+      scale(1, 1);
+      // offsetThis = 0;
+    }
+    else if(this.playerAnimationLeft){
+      scale(-1, 1);
+      offsetThis = -screenX;
+    }
+    image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
     this.frameCount++;
     console.log(this.frameCount);
   }
