@@ -1,5 +1,9 @@
 class Player{
   constructor(startingX, startingY, map, images, animationsAndInstructions){//initialize object
+    this.MaxHP = 100;
+    this.CurrentHP = this.MaxHP;
+    this.MaxMP = 100;
+    this.CurrentMP = this.MaxMP;
     //-----position-----
     this.context = this;
     this.x = startingX;
@@ -89,6 +93,7 @@ class Player{
       // this.y -= this.spriteHeight;
       this.jump();
 //       setTimeout(function(this.context){
+      this.y += (this.spriteHeight*50)/2
       this.spriteHeight = this.spriteHeight*50;
 // },5000)
       console.log("Standing!");

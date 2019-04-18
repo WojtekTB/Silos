@@ -64,26 +64,26 @@ function draw(){
   noStroke();
 
   // scale(1, 1);
-  for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
-    fill(`rgb(255, 0, 0)`);
-    rect(player.playerCollisionPointsBottom[i].x + player.xoffset, player.playerCollisionPointsBottom[i].y + player.yoffset, 2, 2);
-    fill(`rgb(30, 30, 255)`);
-    rect(player.playerCollisionPointsTop[i].x + player.xoffset, player.playerCollisionPointsTop[i].y + player.yoffset, 2, 2);
-    fill(`rgb(255, 0, 255)`);
-    rect(player.playerCollisionPointsSideR[i].x + player.xoffset, player.playerCollisionPointsSideR[i].y + player.yoffset, 2, 2);
-    fill(`rgb(0, 255, 0)`);
-    rect(player.playerCollisionPointsSideL[i].x + player.xoffset, player.playerCollisionPointsSideL[i].y + player.yoffset, 2, 2);
-  }
-  for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
-    fill(`rgb(255, 0, 0)`);
-    rect(player.playerCheckerPointsBottom[i].x + player.xoffset, player.playerCheckerPointsBottom[i].y + player.yoffset, 2, 2);
-    fill(`rgb(30, 30, 255)`);
-    rect(player.playerCheckerPointsTop[i].x + player.xoffset, player.playerCheckerPointsTop[i].y + player.yoffset, 2, 2);
-    fill(`rgb(255, 0, 255)`);
-    rect(player.playerCheckerPointsSideR[i].x + player.xoffset, player.playerCheckerPointsSideR[i].y + player.yoffset, 2, 2);
-    fill(`rgb(0, 255, 0)`);
-    rect(player.playerCheckerPointsSideL[i].x + player.xoffset, player.playerCheckerPointsSideL[i].y + player.yoffset, 2, 2);
-  }
+  // for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
+  //   fill(`rgb(255, 0, 0)`);
+  //   rect(player.playerCollisionPointsBottom[i].x + player.xoffset, player.playerCollisionPointsBottom[i].y + player.yoffset, 2, 2);
+  //   fill(`rgb(30, 30, 255)`);
+  //   rect(player.playerCollisionPointsTop[i].x + player.xoffset, player.playerCollisionPointsTop[i].y + player.yoffset, 2, 2);
+  //   fill(`rgb(255, 0, 255)`);
+  //   rect(player.playerCollisionPointsSideR[i].x + player.xoffset, player.playerCollisionPointsSideR[i].y + player.yoffset, 2, 2);
+  //   fill(`rgb(0, 255, 0)`);
+  //   rect(player.playerCollisionPointsSideL[i].x + player.xoffset, player.playerCollisionPointsSideL[i].y + player.yoffset, 2, 2);
+  // }
+  // for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
+  //   fill(`rgb(255, 0, 0)`);
+  //   rect(player.playerCheckerPointsBottom[i].x + player.xoffset, player.playerCheckerPointsBottom[i].y + player.yoffset, 2, 2);
+  //   fill(`rgb(30, 30, 255)`);
+  //   rect(player.playerCheckerPointsTop[i].x + player.xoffset, player.playerCheckerPointsTop[i].y + player.yoffset, 2, 2);
+  //   fill(`rgb(255, 0, 255)`);
+  //   rect(player.playerCheckerPointsSideR[i].x + player.xoffset, player.playerCheckerPointsSideR[i].y + player.yoffset, 2, 2);
+  //   fill(`rgb(0, 255, 0)`);
+  //   rect(player.playerCheckerPointsSideL[i].x + player.xoffset, player.playerCheckerPointsSideL[i].y + player.yoffset, 2, 2);
+  // }
 
   // rect(player.x - player.spriteWidth/2, player.y, player.spriteWidth, 2);
 
