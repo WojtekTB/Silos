@@ -38,6 +38,7 @@ class Player{
     this.onRightWall = true;
     //-----map value-----
     this.map = map;//get the map the player is currently running around in
+    this.airBlocks = map.airBlocks;
     this.mapScale = map.scale;
     this.mapTiles = map.mapTiles;
     console.log(this.mapScale, this.mapTiles);
@@ -74,7 +75,7 @@ class Player{
     //player animation statuses
     this.playerStateAnimationIdle = true;
     this.playerStateAnimationWalking = false;
-    this.playerAnimationRight = false;
+    this.playerAnimationRight = true;
     this.playerAnimationLeft = false;
     //animations and animationsAndInstructions
     this.playerAnimationIdle = animationsAndInstructions[0];
@@ -90,21 +91,14 @@ class Player{
     if(this.slime)
     {
       this.slime = false;//change to standing if was crouching
-      // this.y -= this.spriteHeight;
-      this.jump();
-//       setTimeout(function(this.context){
-      this.y += (this.spriteHeight*50)/2
+      this.y -= (this.spriteHeight*50)/2
       this.spriteHeight = this.spriteHeight*50;
-// },5000)
       console.log("Standing!");
     }
     else{
       this.slime = true;//change to crouching if was standing
-      this.jump();
-//       setTimeout(function(this.context){
-        this.spriteHeight = this.spriteHeight/50;
-//     console.log('after');
-// },5000)
+      this.spriteHeight = this.spriteHeight/50;
+      this.y += (this.spriteHeight/50);
       console.log("Slime!");
     }
   }
@@ -198,7 +192,7 @@ class Player{
       let tileX = Math.floor(this.playerCollisionPointsSideR[i].x / this.mapScale);
       let tileY = Math.floor(this.playerCollisionPointsSideR[i].y / this.mapScale);
       let tilePlayerIsOn = this.mapTiles[tileY][tileX];
-      if(tilePlayerIsOn != 0){
+      if(this.airBlocks.includes(tilePlayerIsOn) === false){
         if(this.slime === false){
           this.x = this.previousX;
           // console.log("tile to the right side!");
@@ -218,7 +212,7 @@ class Player{
       let tileX = Math.floor(this.playerCollisionPointsSideL[i].x / this.mapScale);
       let tileY = Math.floor(this.playerCollisionPointsSideL[i].y / this.mapScale);
       let tilePlayerIsOn = this.mapTiles[tileY][tileX];
-      if(tilePlayerIsOn != 0){
+      if(this.airBlocks.includes(tilePlayerIsOn) === false){
         if(this.slime === false){
           this.x = this.previousX;
           // console.log("tile to the left side!");
@@ -246,7 +240,7 @@ class Player{
       let tileX = Math.floor(this.playerCollisionPointsTop[i].x / this.mapScale);
       let tileY = Math.floor(this.playerCollisionPointsTop[i].y / this.mapScale);
       let tilePlayerIsOn = this.mapTiles[tileY][tileX];
-      if(tilePlayerIsOn != 0){
+      if(this.airBlocks.includes(tilePlayerIsOn) === false){
         this.y = this.previousY;
         this.overallVelocityY = this.gravity;
         // console.log("tile Top!");
@@ -268,7 +262,7 @@ class Player{
       let tileX = Math.floor(this.playerCollisionPointsBottom[i].x / this.mapScale);
       let tileY = Math.floor(this.playerCollisionPointsBottom[i].y / this.mapScale);
       let tilePlayerIsOn = this.mapTiles[tileY][tileX];
-      if(tilePlayerIsOn != 0){
+      if(this.airBlocks.includes(tilePlayerIsOn) === false){
         this.y = this.previousY;
         this.overallVelocityY = 0;
         this.jumpNumber = this.maxJumps;
@@ -557,15 +551,15 @@ class Player{
     // console.log(this.currentAnimation.length);
     let offsetThis = 0;
     if(this.playerAnimationRight){
-      scale(1, 1);
+      image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
       // offsetThis = 0;
     }
     else if(this.playerAnimationLeft){
       scale(-1, 1);
       offsetThis = -screenX;
+      image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+      scale(-1, 1);
     }
-    image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
-    scale(1, 1);
     this.frameCount++;
     // console.log(this.frameCount);
   }

@@ -1,14 +1,18 @@
 var screenX = window.innerWidth;
 var screenY = window.innerHeight - 20;
 var player;
+var playerHud;
 var map1;
 var mapScale = screenY;
 var animationsAndInstructions = [[], []];
 
 var images = {
   brick: null,
-  stone: null,
-  player: null
+  grass1: null,
+  grass2: null,
+  grassLeft: null,
+  grassRight: null,
+  grassFull: null,
 };
 
 var mapTiles = [
@@ -28,14 +32,18 @@ var mapTiles = [
   [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 4, 3, 2, 2, 3, 3, 2, 3, 2, 5, 1, 1, 4, 2, 3, 2, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
 function preload(){
-  images.brick = loadImage('assets/brick.png');
-  images.player = loadImage('assets/yeet.png');
+  images.brick = loadImage('assets/blocks/brick.png');
+  images.grass1 = loadImage('assets/blocks/grass1.png');
+  images.grass2 = loadImage('assets/blocks/grass2.png');
+  images.grassLeft = loadImage('assets/blocks/grassLeft.png');
+  images.grassRight = loadImage('assets/blocks/grassRight.png');
+  images.grassFull = loadImage('assets/blocks/grassFull.png');
   for(let i = 1;  i < 12; i++){
     if(i > 9){
       animationsAndInstructions[0].push(loadImage("assets/idle.sprite/idle00" + i + ".png"));
@@ -51,6 +59,7 @@ function setup() {
   createCanvas(screenX, screenY);
   map1 = new Map(mapTiles, images, mapScale);
   player = new Player(map1.scale*2, 400, map1, images.player, animationsAndInstructions);
+  playerHud = new PlayerHud(player);
 
   // frameRate(60);
 }
@@ -62,6 +71,8 @@ function draw(){
   player.update();
   player.show();
   noStroke();
+  playerHud.show();
+  playerHud.update();
 
   // scale(1, 1);
   // for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
