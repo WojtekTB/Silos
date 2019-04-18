@@ -88,18 +88,18 @@ class Player{
       this.slime = false;//change to standing if was crouching
       // this.y -= this.spriteHeight;
       this.jump();
-      setTimeout(function(this.context){
+//       setTimeout(function(this.context){
       this.spriteHeight = this.spriteHeight*50;
-},5000)
+// },5000)
       console.log("Standing!");
     }
     else{
       this.slime = true;//change to crouching if was standing
       this.jump();
-      setTimeout(function(this.context){
+//       setTimeout(function(this.context){
         this.spriteHeight = this.spriteHeight/50;
-    console.log('after');
-},5000)
+//     console.log('after');
+// },5000)
       console.log("Slime!");
     }
   }
