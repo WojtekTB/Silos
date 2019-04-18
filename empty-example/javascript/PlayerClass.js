@@ -1,6 +1,7 @@
 class Player{
   constructor(startingX, startingY, map, images, animationsAndInstructions){//initialize object
     //-----position-----
+    this.context = this;
     this.x = startingX;
     this.y = startingY;
     this.previousX = this.x;
@@ -9,7 +10,7 @@ class Player{
     this.yoffset = 0;
     this.displayX = this.x + this.xoffset;
     //-----vectors-----
-    this.speed = 8;//walking speed force
+    this.speed = 6;//walking speed force
     this.jumpForce = 10;//jumping force
     this.overallVelocityY = 0;//total force acting on sprite on Y
     this.overallVelocityX = 0;//total force acting on sprite on X
@@ -17,13 +18,14 @@ class Player{
     this.stepsPerFrame = 5;
     //-------player frictions------
     this.floorFriction = 1;
-    this.airFriction = 0.2;
+    this.airFriction = 0.5;
     //-----sprite-----
-    this.spriteHeight = 115;
-    this.spriteWidth = 61;
+    this.spriteScale = 0.7;
+    this.spriteHeight = 115 * this.spriteScale;
+    this.spriteWidth = 61 * this.spriteScale;
     this.image = images;
     //-----player-statuses-----
-    this.crouched = 0;//[0 = standing; 1 = crouching] => start off standing
+    this.slime = false;//[0 = standing; 1 = crouching] => start off standing
     this.inTheAir = false;
     this.inTheAirChannel = [0, 0, 0];
     this.maxJumps = 2;//constant max number of jumps to reset to
@@ -76,7 +78,33 @@ class Player{
     this.onWhatFrame = 0;
     this.frameCount = 0;
     this.framekeeper = 0;
+    // this.timer = 0;
   }
+
+  //slime
+  transition(){
+    if(this.slime)
+    {
+      this.slime = false;//change to standing if was crouching
+      // this.y -= this.spriteHeight;
+      this.jump();
+      setTimeout(function(this.context){
+      this.spriteHeight = this.spriteHeight*50;
+},5000)
+      console.log("Standing!");
+    }
+    else{
+      this.slime = true;//change to crouching if was standing
+      this.jump();
+      setTimeout(function(this.context){
+        this.spriteHeight = this.spriteHeight/50;
+    console.log('after');
+},5000)
+      console.log("Slime!");
+    }
+  }
+
+  //normal
 
   moveToClick(){
     this.x = mouseX;
@@ -96,7 +124,7 @@ class Player{
     else if (keyIsDown(LEFT_ARROW) || keyIsDown("A".charCodeAt(0))) {
       this.overallVelocityX -= this.speed/4;
       if(this.overallVelocityX < -this.speed){
-        this.overallVelocityX = -this.speed/4;
+        this.overallVelocityX = -this.speed;
       }
       this.playerAnimationLeft = true;
       this.playerAnimationRight = false;
@@ -104,7 +132,7 @@ class Player{
     else if (keyIsDown(RIGHT_ARROW) || keyIsDown("D".charCodeAt(0))) {
       this.overallVelocityX += this.speed/4;
       if(this.overallVelocityX > this.speed){
-        this.overallVelocityX = this.speed/4;
+        this.overallVelocityX = this.speed;
       }
       this.playerAnimationLeft = false;
       this.playerAnimationRight = true;
@@ -114,22 +142,8 @@ class Player{
     }
   }
 
-  crouch(){//changes the state of crouching from 1 to 0 or 0 to 1
-    if(this.crouched === 1)
-    {
-      this.crouched = 0;//change to standing if was crouching
-      this.y -= this.spriteHeight;
-      this.spriteHeight = this.spriteHeight*2;
-      console.log("Standing!");
-    }
-    else{
-      this.crouched = 1;//change to crouching if was standing
-      this.spriteHeight = this.spriteHeight/2;
-      console.log("Crouching!");
-    }
-  }
-
   jump(){//adds upwards force to whatever the value was before
+    // setTimeout(function(){player.timer++;}, 1000);
     if(this.jumpNumber != 0)
     {
       if(this.isNextToB === false && this.isNextToT === false && this.isNextToL === false && this.isNextToR === true){//if on right wall
@@ -147,17 +161,24 @@ class Player{
 
   normalJump(){
       // this.y -= 20;
+      this.overallVelocityY = 0;
       this.overallVelocityY -= this.jumpForce;
     // console.log(this.jumpNumber);
   }
 
   wallJump(right){
+    this.overallVelocityX = 0;
+    this.overallVelocityY = 0;
     this.overallVelocityY -= this.jumpForce*1.3;
     if(right){
       this.overallVelocityX -= this.speed*1.3;
+      this.playerAnimationRight = false;
+      this.playerAnimationLeft = true;
     }
     else{
       this.overallVelocityX += this.speed*1.3;
+      this.playerAnimationRight = true;
+      this.playerAnimationLeft = false;
     }
   }
 
@@ -173,16 +194,18 @@ class Player{
       let tileY = Math.floor(this.playerCollisionPointsSideR[i].y / this.mapScale);
       let tilePlayerIsOn = this.mapTiles[tileY][tileX];
       if(tilePlayerIsOn != 0){
-        this.x = this.previousX;
-        // console.log("tile to the right side!");
-        // this.overallVelocityY -= 0.4
-        this.jumpNumber = 1;
-        nonBumped = true;
-        this.overallVelocityX = 0;
-        this.onWall = true;
-        this.onRightWall = true;
-        // this.inTheAir = false;
-        break;
+        if(this.slime === false){
+          this.x = this.previousX;
+          // console.log("tile to the right side!");
+          // this.overallVelocityY -= 0.4
+          this.jumpNumber = 1;
+          nonBumped = true;
+          this.overallVelocityX = 0;
+          this.onWall = true;
+          this.onRightWall = true;
+          // this.inTheAir = false;
+          break;
+        }
       }
     }
 
@@ -191,16 +214,18 @@ class Player{
       let tileY = Math.floor(this.playerCollisionPointsSideL[i].y / this.mapScale);
       let tilePlayerIsOn = this.mapTiles[tileY][tileX];
       if(tilePlayerIsOn != 0){
-        this.x = this.previousX;
-        // console.log("tile to the left side!");
-        this.jumpNumber = 1;
-        nonBumped = true;
-        this.overallVelocityX = 0;
-        this.onWall = true;
-        this.onRightWall = false;
-        // this.inTheAir = false;
-        this.inTheAirChannel[0] = 1;
-        break;
+        if(this.slime === false){
+          this.x = this.previousX;
+          // console.log("tile to the left side!");
+          this.jumpNumber = 1;
+          nonBumped = true;
+          this.overallVelocityX = 0;
+          this.onWall = true;
+          this.onRightWall = false;
+          // this.inTheAir = false;
+          this.inTheAirChannel[0] = 1;
+          break;
+        }
       }
     }
     if(nonBumped){
@@ -440,9 +465,15 @@ class Player{
   }
 }
 
+  centerOnPlayerY(){
+    let centerYoffset = -100;
+    this.map.setYOffset(-(this.y - (screenY/2) + centerYoffset));
+    this.yoffset = -(this.y - (screenY/2) + centerYoffset);
+  }
   centerOnPlayerX(){
-    this.map.setXOffset(-(this.x - (screenX/2)));
-    this.xoffset = -(this.x - (screenX/2));
+    let centerXoffset = 0;
+    this.map.setXOffset(-(this.x - (screenX/2) + centerXoffset));
+    this.xoffset = -(this.x - (screenX/2) + centerXoffset);
   }
 
   changeAnimation(){
@@ -502,12 +533,14 @@ class Player{
     }
     this.displayX = this.x + this.xoffset;
     this.checkIfInAir();
-    if(this.y > screenY - this.spriteHeight){//when character y is at the floor limit
-      this.y = screenY - this.spriteHeight;
-      this.overallVelocityY = 0;
-      this.jumpNumber = this.maxJumps;
-    }
+    // if(this.y > screenY - this.spriteHeight){//when character y is at the floor limit
+    //   this.y = screenY - this.spriteHeight;
+    //   this.overallVelocityY = 0;
+    //   this.jumpNumber = this.maxJumps;
+    // }
     this.centerOnPlayerX();
+    this.centerOnPlayerY();
+    // console.log(this.timer);
   }
 
   show(){//render
@@ -527,7 +560,8 @@ class Player{
       offsetThis = -screenX;
     }
     image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+    scale(1, 1);
     this.frameCount++;
-    console.log(this.frameCount);
+    // console.log(this.frameCount);
   }
 }

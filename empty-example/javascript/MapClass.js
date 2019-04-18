@@ -4,7 +4,7 @@ class Map{
     this.columns = this.mapTiles[0].length;//get number of columns that map makes up
     this.rows = this.mapTiles.length;//get number of rows in the map
     this.brickTexture = assets.brick;//get the brick texture from the
-    this.scale = scale/this.rows;
+    this.scale = 50;
     this.y = 0;
     this.x = 0;
     this.previousX = this.x;
@@ -20,8 +20,12 @@ class Map{
         if(this.mapTiles[columnNumber][rowPosition] === 1){
           let drawnX = rowPosition*this.scale + this.xoffset;
           let drawnY = columnNumber*this.scale + this.yoffset;
-          image(this.brickTexture, drawnX, drawnY, this.scale, this.scale);
-          this.displayX = this.x + this.xoffset;
+          if(drawnX < screenX && drawnX > 0 || drawnX < screenX+this.scale){
+            if(drawnY < screenY && drawnY > 0 || drawnY < screenY+this.scale){
+              image(this.brickTexture, drawnX, drawnY, this.scale, this.scale);
+              this.displayX = this.x + this.xoffset;
+            }
+          }
         }
       }
     }
@@ -34,6 +38,10 @@ class Map{
 
   setXOffset(x){
     this.xoffset = x;
+  }
+
+  setYOffset(y){
+    this.yoffset = y;
   }
 
   adjustTo(x, y){
