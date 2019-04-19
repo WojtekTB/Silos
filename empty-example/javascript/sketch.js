@@ -5,6 +5,7 @@ var playerHud;
 var map1;
 var mapScale = screenY;
 var animationsAndInstructions = [[], []];
+var testNPC;
 
 var images = {
   brick: null,
@@ -60,7 +61,6 @@ function setup() {
   map1 = new Map(mapTiles, images, mapScale);
   player = new Player(map1.scale*2, 400, map1, images.player, animationsAndInstructions);
   playerHud = new PlayerHud(player);
-
   // frameRate(60);
 }
 
@@ -73,6 +73,11 @@ function draw(){
   noStroke();
   playerHud.show();
   playerHud.update();
+  if(testNPC != null){
+    testNPC.run();
+  }
+  // system.addParticle();
+  // system.run();
 
   // scale(1, 1);
   // for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
@@ -100,6 +105,7 @@ function draw(){
 
 }
 
+
 function keyPressed(){
   if (key == ' '){
     player.jump();
@@ -109,7 +115,7 @@ function keyPressed(){
   }
   if(key == 'z')
   {
-    player.moveToClick();
+    testNPC = new NPC(mouseX, mouseY, [], [], player);
   }
   if(key == 'p')
   {

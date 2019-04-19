@@ -545,14 +545,10 @@ class Player{
   show(){//render
     fill(255);
     this.changeAnimation();
-    // rect(this.x - (this.spriteWidth / 2), this.y - (this.spriteHeight / 2), this.spriteWidth, this.spriteHeight);
-    // image(this.image, (this.x - (this.spriteWidth / 2)) + this.xoffset, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
-    // console.log(this.onWhatFrame);
-    // console.log(this.currentAnimation.length);
     let offsetThis = 0;
     if(this.playerAnimationRight){
       image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
-      // offsetThis = 0;
+  
     }
     else if(this.playerAnimationLeft){
       scale(-1, 1);

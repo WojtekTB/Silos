@@ -12,10 +12,10 @@ class PlayerHud{
 
   show(){
     fill(`rgb(255, 0, 0)`);
-    rect(this.hpX, this.hpY, 400 * (this.playerHP[1]/this.playerHP[0]), 20);
+    rect(this.hpX, this.hpY, 400 * (this.playerHP[1]/this.playerHP[0]), 25);
     fill(`rgb(0, 0, 255)`);
-    rect(this.mpX, this.mpY + 20, 400 * (this.playerMP[1]/this.playerMP[0]), 20);
-    // image(this.mainImageHud, 20, 20, screenX/4, (((screenX/4) * this.mainImageHud.height)/this.mainImageHud.width));
+    rect(this.mpX, this.mpY + 25, 400 * (this.playerMP[1]/this.playerMP[0]), 25);
+    image(this.mainImageHud, 0, 0, 400, 50);
   }
   update(){
     this.playerHP = [this.player.MaxHP, this.player.CurrentHP];
