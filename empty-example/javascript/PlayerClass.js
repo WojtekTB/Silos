@@ -79,6 +79,7 @@ class Player{
     this.playerAnimationLeft = false;
     //animations and animationsAndInstructions
     this.playerAnimationIdle = animationsAndInstructions[0];
+    this.playerAnimationWalk = animationsAndInstructions[1];
     this.currentAnimation = [];
     this.onWhatFrame = 0;
     this.frameCount = 0;
@@ -116,6 +117,7 @@ class Player{
   controlMovement(){//check for key pressed and move if so
     if(keyIsDown("X".charCodeAt(0)) && keyIsDown(RIGHT_ARROW)){
       this.dash(true);
+      this.currentAnimation = this.playerAnimationWalk;
     }
     else if(keyIsDown("X".charCodeAt(0)) && keyIsDown(LEFT_ARROW)){
       this.dash(false);
@@ -127,6 +129,8 @@ class Player{
       }
       this.playerAnimationLeft = true;
       this.playerAnimationRight = false;
+      this.playerStateAnimationWalking = true;
+      this.playerStateAnimationIdle = false;
     }
     else if (keyIsDown(RIGHT_ARROW) || keyIsDown("D".charCodeAt(0))) {
       this.overallVelocityX += this.speed/4;
@@ -135,9 +139,15 @@ class Player{
       }
       this.playerAnimationLeft = false;
       this.playerAnimationRight = true;
+      this.playerStateAnimationWalking = true;
+      this.playerStateAnimationIdle = false;
     }
     else if (keyIsDown("L".charCodeAt(0))) {
       console.table({top: this.isNextToT, bottom: this.isNextToB, left: this.isNextToL, right: this.isNextToR});
+    }
+    else{
+    this.playerStateAnimationWalking = false;
+    this.playerStateAnimationIdle = true;
     }
   }
 
@@ -480,7 +490,7 @@ class Player{
       this.currentAnimation = this.playerAnimationIdle;
     }
     else if(this.playerStateAnimationWalking){
-
+      this.currentAnimation = this.playerAnimationWalk;
     }
   }
 
@@ -543,12 +553,13 @@ class Player{
   }
 
   show(){//render
+    // console.log(this.x + this.xoffset, this.y + this.yoffset);
+    // console.log("^player^");
     fill(255);
     this.changeAnimation();
     let offsetThis = 0;
     if(this.playerAnimationRight){
       image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
-  
     }
     else if(this.playerAnimationLeft){
       scale(-1, 1);
