@@ -45,7 +45,7 @@ function preload(){
   images.grassLeft = loadImage('assets/blocks/grassLeft.png');
   images.grassRight = loadImage('assets/blocks/grassRight.png');
   images.grassFull = loadImage('assets/blocks/grassFull.png');
-  for(let i = 1;  i < 12; i++){
+  for(let i = 1;  i < 12; i++){//load idle anim
     if(i > 9){
       animationsAndInstructions[0].push(loadImage("assets/idle.sprite/idle00" + i + ".png"));
     }
@@ -53,7 +53,14 @@ function preload(){
       animationsAndInstructions[0].push(loadImage("assets/idle.sprite/idle000" + i + ".png"));
     }
   }
-  animationsAndInstructions[1] = [0, 11, "idle"];
+  for(let i = 1;  i < 12; i++){//load walking anim
+    if(i > 9){
+      animationsAndInstructions[1].push(loadImage("assets/walk.sprite/walking00" + i + ".png"));
+    }
+    else{
+      animationsAndInstructions[1].push(loadImage("assets/walk.sprite/walking000" + i + ".png"));
+    }
+  }
 }
 
 function setup() {
@@ -115,7 +122,8 @@ function keyPressed(){
   }
   if(key == 'z')
   {
-    testNPC = new NPC(mouseX, mouseY, [], [], player);
+    // console.log(player.x + player.xoffset, player.y + player.yoffset);
+    testNPC = new NPC(player.x, player.y-10, [], [], player);
   }
   if(key == 'p')
   {

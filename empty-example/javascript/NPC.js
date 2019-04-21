@@ -1,5 +1,7 @@
 class NPC{
   constructor(x, y, animations, moving, player){
+    this.name = "Test NPC";
+    this.specialText = "I am only born to die, there is no other reason for my existance. Every day I spend on this grid is suffering and pain. Please help."
     this.moving = moving;
     this.idleAnimation = animations[0];
     // this.spriteW = this.this.idleAnimation[0].width;
@@ -28,32 +30,35 @@ class NPC{
     this.overallVelocityX = 0;//total force acting on sprite on X
     this.gravity = 0.5;//downward pull
     this.stepsPerFrame = 2;
+
+    this.walkingRight = false;
   }
 
+  showDialogue(){
+    
+  }
 
   collisionDetectionSide(){
     let nonBumped = true;
-      let tileX = Math.floor(this.rightCollisionPoint.x / this.map.scale);
-      let tileY = Math.floor(this.rightCollisionPoint.y / this.map.scale);
-      let tilePlayerIsOn = this.map.mapTiles[tileY][tileX];
-      if(this.map.airBlocks.includes(tilePlayerIsOn) === false){
-        if(this.slime === false){
-          this.x = this.previousX;
-          nonBumped = false;
-        }
-      }
+    let tileX = Math.floor(this.rightCollisionPoint.x / this.map.scale);
+    let tileY = Math.floor(this.rightCollisionPoint.y / this.map.scale);
+    let tilePlayerIsOn = this.map.mapTiles[tileY][tileX];
+    if(this.map.airBlocks.includes(tilePlayerIsOn) === false){//right side
+      this.x = this.previousX;
+      this.walkingRight = false;
+      nonBumped = false;
+    }
     tileX = Math.floor(this.leftCollisionPoint.x / this.map.scale);
     tileY = Math.floor(this.leftCollisionPoint.y / this.map.scale);
     tilePlayerIsOn = this.map.mapTiles[tileY][tileX];
-    if(this.map.airBlocks.includes(tilePlayerIsOn) === false){
-      if(this.slime === false){
-        this.x = this.previousX;
-        nonBumped = false;
-      }
+    if(this.map.airBlocks.includes(tilePlayerIsOn) === false){//left side
+      this.x = this.previousX;
+      this.walkingRight = true;
+      nonBumped = false;
     }
-    // if(nonBumped){
+    if(nonBumped){
       this.previousX = this.x;
-    // }
+    }
   }
 
   collisionDetectionBottom(){
@@ -89,9 +94,14 @@ class NPC{
     // image(this.idleAnimation[0]);
     fill(0);
     rect(this.x-this.spriteW/2 + this.xoffset, this.y-this.spriteH/2 + this.yoffset, this.spriteW, this.spriteH);
+    fill(`rgb(0, 255, 0)`);
+    rect(this.bottomCollisionPoint.x + this.xoffset, this.bottomCollisionPoint.y + this.yoffset, 1, 1);
+    rect(this.rightCollisionPoint.x + this.xoffset, this.rightCollisionPoint.y + this.yoffset, 1, 1);
+    rect(this.leftCollisionPoint.x + this.xoffset, this.leftCollisionPoint.y + this.yoffset, 1, 1);
   }
 
   update(){
+    // console.log(this.x, this.y);
     this.gravityPull();
     this.y += this.overallVelocityY;
     this.collisionPointsUpdate();
@@ -100,13 +110,16 @@ class NPC{
     this.collisionPointsUpdate();
     this.xoffset = this.player.xoffset;
     this.yoffset = this.player.yoffset;
-
-    this.x -= 1;
+    if(this.walkingRight){
+      this.x += 1;
+    }
+    else{
+      this.x -= 1;
+    }
   }
 
   run(){
     this.show();
     this.update();
   }
-
 }
