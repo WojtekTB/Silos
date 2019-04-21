@@ -7,6 +7,7 @@ var map2;
 var mapScale = screenY;
 var animationsAndInstructions = [[], []];
 var testNPC;
+var stageBuilder;
 
 var images = {
   brick: null,
@@ -70,25 +71,28 @@ function preload(){
 
 function setup() {
   createCanvas(screenX, screenY);
-  map1 = new Map(mapTiles, images, mapScale);
+  // map1 = new Map(mapTiles, images, mapScale);
   map2 = new Map(mapTiles, images, mapScale);
   player = new Player(map2.scale*2, 400, map2, images.player, animationsAndInstructions);
   playerHud = new PlayerHud(player);
+  stageBuilder = new StageBuilder(map2);
   // frameRate(60);
 }
 
 function draw(){
   // put drawing code here
   background(100);
-  player.update();
-  player.show();
-  map2.show();
   noStroke();
-  playerHud.show();
-  playerHud.update();
-  if(testNPC != null){
-    testNPC.run();
-  }
+  // player.update();
+  // player.show();
+  // map2.show();
+  // noStroke();
+  // playerHud.show();
+  // playerHud.update();
+  // if(testNPC != null){
+  //   testNPC.run();
+  // }
+  stageBuilder.show();
 }
 
 

@@ -1,7 +1,10 @@
-class Map{
-  constructor(mapTiles, assets, scale){
-    this.assets = assets;
-    this.mapTiles = mapTiles;//arrays of arrays of map tiles with 1s and 0s
+class StageBuilder{
+  constructor(map){
+    this.map = map;
+    this.mapTiles = map.mapTiles;
+    let assets = this.map.assets;
+
+//--------map stuff -------
     this.columns = this.mapTiles[0].length;//get number of columns that map makes up
     this.rows = this.mapTiles.length;//get number of rows in the map
     this.brickTexture = [assets.brick, 1];//get the brick texture from the
@@ -30,7 +33,38 @@ class Map{
     this.displayX = this.x + this.xoffset;
   }
 
+
+  controlMovement(){//check for key pressed and move if so
+    if(keyIsDown("W".charCodeAt(0))){
+      this.yoffset += this.scale;
+    }
+    else if (keyIsDown("A".charCodeAt(0))){
+      this.xoffset += this.scale;
+    }
+    else if (keyIsDown("S".charCodeAt(0))){
+      this.yoffset -= this.scale;
+    }
+    else if (keyIsDown("D".charCodeAt(0))){
+      this.xoffset -= this.scale;
+    }
+    else if (keyIsDown(" ".charCodeAt(0))){
+      this.xoffset = 0;
+      this.yoffset = 0;
+    }
+  }
+
+  drawBrush(){
+    let tileX = Math.floor(((mouseX) / this.scale) - (this.xoffset/this.scale));
+    let tileY = Math.floor(((mouseY) / this.scale) - (this.yoffset/this.scale));
+    let displayX = Math.floor(((mouseX) / this.scale));
+    let displayY = Math.floor(((mouseY) / this.scale));
+    fill(255);
+    rect(displayX*this.scale, displayY*this.scale, this.scale, this.scale);
+    console.log(displayX, displayY, tileX, tileY);
+  }
+
   show(){
+    this.controlMovement();
     for(let columnNumber = 0; columnNumber < this.rows; columnNumber++){
       for(let rowPosition = 0; rowPosition < this.columns; rowPosition++){
         let drawnX = rowPosition*this.scale + this.xoffset;
@@ -76,35 +110,11 @@ class Map{
               image(this.candle[0], drawnX, drawnY, this.scale, this.scale);
             }
           }
-          this.drawLightParticle(drawnX + this.scale/2, drawnY + this.scale/2, 10, 10);
+          this.map.drawLightParticle(drawnX + this.scale/2, drawnY + this.scale/2, 10, 10);
         }
         this.displayX = this.x + this.xoffset;
       }
     }
-  }
-
-  translate(xoffset, yoffset){
-    this.xoffset += xoffset;
-    this.yoffset += yoffset;
-  }
-
-  setXOffset(x){
-    this.xoffset = x;
-  }
-
-  setYOffset(y){
-    this.yoffset = y;
-  }
-
-  adjustTo(x, y){
-    this.x = x- screenX/4;
-    this.y = y - screenY/4;
-  }
-
-  drawLightParticle(x, y, r, strength){
-    for(let i = 1; i < strength; i++){
-      fill(255, 255, 102, 15-(i* (20/strength)));
-      circle(x, y, r + (i * r*5));
-    }
+    this.drawBrush();
   }
 }
