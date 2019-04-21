@@ -4,9 +4,14 @@ class Player{
     this.CurrentHP = this.MaxHP;
     this.MaxMP = 100;
     this.CurrentMP = this.MaxMP;
+    //-----sprite-----
+    this.spriteScale = 0.7;
+    this.spriteHeight = (animationsAndInstructions[0][0].height * this.spriteScale);
+    this.spriteWidth = (animationsAndInstructions[0][0].width * this.spriteScale);
+    this.image = images;
     //-----position-----
     this.context = this;
-    this.x = startingX;
+    this.x = startingX + (animationsAndInstructions[0][0].width * this.spriteScale * 4)/20;
     this.y = startingY;
     this.previousX = this.x;
     this.previousY = this.y;
@@ -23,11 +28,6 @@ class Player{
     //-------player frictions------
     this.floorFriction = 1;
     this.airFriction = 0.5;
-    //-----sprite-----
-    this.spriteScale = 0.7;
-    this.spriteHeight = 115 * this.spriteScale;
-    this.spriteWidth = 61 * this.spriteScale;
-    this.image = images;
     //-----player-statuses-----
     this.slime = false;//[0 = standing; 1 = crouching] => start off standing
     this.inTheAir = false;
@@ -36,6 +36,7 @@ class Player{
     this.jumpNumber = this.maxJumps;//number of jumps before having to touch the ground again
     this.onWall = true;
     this.onRightWall = true;
+    this.crouching = false;
     //-----map value-----
     this.map = map;//get the map the player is currently running around in
     this.airBlocks = map.airBlocks;
@@ -80,6 +81,7 @@ class Player{
     //animations and animationsAndInstructions
     this.playerAnimationIdle = animationsAndInstructions[0];
     this.playerAnimationWalk = animationsAndInstructions[1];
+    this.playerAnimationCrouch = animationsAndInstructions[2];
     this.currentAnimation = [];
     this.onWhatFrame = 0;
     this.frameCount = 0;
@@ -88,6 +90,17 @@ class Player{
   }
 
   //slime
+
+  //normal
+
+  moveToClick(){
+    this.x = mouseX;
+    this.y = mouseY;
+    console.log(this.x, this.y);
+    // this.overallVelocityY = 0;
+    this.inTheAir = 1;
+  }
+
   transition(){
     if(this.slime)
     {
@@ -103,26 +116,19 @@ class Player{
       console.log("Slime!");
     }
   }
-
-  //normal
-
-  moveToClick(){
-    this.x = mouseX;
-    this.y = mouseY;
-    console.log(this.x, this.y);
-    // this.overallVelocityY = 0;
-    this.inTheAir = 1;
-  }
-
   controlMovement(){//check for key pressed and move if so
-    if(keyIsDown("X".charCodeAt(0)) && keyIsDown(RIGHT_ARROW)){
-      this.dash(true);
-      this.currentAnimation = this.playerAnimationWalk;
+    if (keyIsDown("S".charCodeAt(0))) {
+      this.crouching = true;
     }
-    else if(keyIsDown("X".charCodeAt(0)) && keyIsDown(LEFT_ARROW)){
-      this.dash(false);
+    else{
+      this.crouching = false;
     }
-    else if (keyIsDown(LEFT_ARROW) || keyIsDown("A".charCodeAt(0))) {
+    if (keyIsDown(LEFT_ARROW) || keyIsDown("A".charCodeAt(0))){
+      if(this.crouching){
+        this.playerAnimationLeft = true;
+        this.playerAnimationRight = false;
+        return;
+      }
       this.overallVelocityX -= this.speed/4;
       if(this.overallVelocityX < -this.speed){
         this.overallVelocityX = -this.speed;
@@ -133,6 +139,11 @@ class Player{
       this.playerStateAnimationIdle = false;
     }
     else if (keyIsDown(RIGHT_ARROW) || keyIsDown("D".charCodeAt(0))) {
+      if(this.crouching){
+        this.playerAnimationLeft = false;
+        this.playerAnimationRight = true;
+        return;
+      }
       this.overallVelocityX += this.speed/4;
       if(this.overallVelocityX > this.speed){
         this.overallVelocityX = this.speed;
@@ -293,29 +304,30 @@ class Player{
   }
 
   collisionPointsUpdate(){
-    this.playerCollisionPointsSideR[0].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding;
+    this.playerCollisionPointsSideR[0].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding - (animationsAndInstructions[0][0].width * this.spriteScale*3)/20;
     this.playerCollisionPointsSideR[0].y = (this.y - this.spriteHeight/2) + this.collisionPointSidePadding;//right
 
-    this.playerCollisionPointsSideL[0].x = this.x - this.spriteWidth/2 - this.collisionPointSidePadding;
+    this.playerCollisionPointsSideL[0].x = (this.x - this.spriteWidth/2 - this.collisionPointSidePadding) + (animationsAndInstructions[0][0].width * this.spriteScale*3)/20;
     this.playerCollisionPointsSideL[0].y = (this.y - this.spriteHeight/2) + this.collisionPointSidePadding;//left
 
-    this.playerCollisionPointsTop[0].x = (this.x - this.spriteWidth/2) + this.collisionPointSidePadding;
+    this.playerCollisionPointsTop[0].x = (this.x - this.spriteWidth/2) + this.spriteWidth*3/20;
     this.playerCollisionPointsTop[0].y = this.y - this.spriteHeight/2;
 
-    this.playerCollisionPointsBottom[0].x = (this.x - this.spriteWidth/2) + this.collisionPointSidePadding;
+    this.playerCollisionPointsBottom[0].x = (this.x - this.spriteWidth/2) + this.spriteWidth*3/20;
     this.playerCollisionPointsBottom[0].y = this.y + this.spriteHeight/2;
     for(let i = 1; i < this.numberOfCollisionPointsOnSide; i++){
-      this.playerCollisionPointsTop[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
-      this.playerCollisionPointsTop[i].y = this.y - this.spriteHeight/2;
-
-      this.playerCollisionPointsBottom[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
-      this.playerCollisionPointsBottom[i].y = this.y + this.spriteHeight/2;
-
-      this.playerCollisionPointsSideR[i].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding;
+      this.playerCollisionPointsSideR[i].x = (this.x + this.spriteWidth/2 + this.collisionPointSidePadding) - (animationsAndInstructions[0][0].width * this.spriteScale*3)/20;
       this.playerCollisionPointsSideR[i].y = ((this.y - this.spriteHeight/2 + this.collisionPointSidePadding) + i * ((this.spriteHeight-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
 
-      this.playerCollisionPointsSideL[i].x = this.x - this.spriteWidth/2 - this.collisionPointSidePadding;
+      this.playerCollisionPointsSideL[i].x = (this.x - this.spriteWidth/2 - this.collisionPointSidePadding) + (animationsAndInstructions[0][0].width * this.spriteScale*3)/20;
       this.playerCollisionPointsSideL[i].y = ((this.y - this.spriteHeight/2 + this.collisionPointSidePadding) + i * ((this.spriteHeight-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
+
+      this.playerCollisionPointsTop[i].x = ((this.x - this.spriteWidth/2) + this.spriteWidth*3/20) + ((i) * (this.spriteWidth - this.spriteWidth*6/20)/(this.numberOfCollisionPointsOnSide-1));
+      this.playerCollisionPointsTop[i].y = this.y - this.spriteHeight/2;
+
+      this.playerCollisionPointsBottom[i].x = ((this.x - this.spriteWidth/2) + this.spriteWidth*3/20) + ((i) * (this.spriteWidth - this.spriteWidth*6/20)/(this.numberOfCollisionPointsOnSide-1));;
+      this.playerCollisionPointsBottom[i].y = this.y + this.spriteHeight/2;
+
     }
   }
 
@@ -394,7 +406,7 @@ class Player{
   }
 
   checkerPointsUpdate(){
-    let extraPadding = 5;
+    let extraPadding = -4;
     this.playerCheckerPointsSideR[0].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding + extraPadding;
     this.playerCheckerPointsSideR[0].y = (this.y - this.spriteHeight/2) + (this.collisionPointSidePadding * 5);//right
 
@@ -422,12 +434,10 @@ class Player{
 
   }
 
-
   translate(x, y){
   this.xoffset += x;
   this.yoffset += y;
 }
-
   translateScreen(x, y){
   this.map.translate(x, y);
   this.translate(x, y);
@@ -463,7 +473,6 @@ class Player{
     }
   }
 }
-
   checkIfInAir(){
     if(this.isNextToB === false && this.isNextToT === false && this.isNextToL === false && this.isNextToR === false){
     this.inTheAir = true;
@@ -487,17 +496,21 @@ class Player{
 
   changeAnimation(){
     if(this.playerStateAnimationIdle){
-      this.currentAnimation = this.playerAnimationIdle;
+      if(this.currentAnimation != this.playerAnimationIdle){
+        this.onWhatFrame = 0;
+        this.currentAnimation = this.playerAnimationIdle;
+      }
     }
     else if(this.playerStateAnimationWalking){
-      this.currentAnimation = this.playerAnimationWalk;
+      if(this.currentAnimation != this.playerAnimationWalk){
+        this.onWhatFrame = 0;
+        this.currentAnimation = this.playerAnimationWalk;
+      }
     }
   }
-
   playAnimation(frame){
     let speed = 3;
-
-    if(frame === speed)
+    if(frame > speed)
     {
       this.frameCount = 0;
       if(this.onWhatFrame === this.currentAnimation.length -1 ){
@@ -510,6 +523,16 @@ class Player{
     }
     else{
       return this.currentAnimation[this.onWhatFrame];
+    }
+  }
+
+  interact(){//incomplete
+    let lengthInFront;
+    if(this.playerAnimationRight){
+      lengthInFront = 20;
+    }
+    else{
+      lengthInFront = 20;
     }
   }
 
@@ -559,12 +582,24 @@ class Player{
     this.changeAnimation();
     let offsetThis = 0;
     if(this.playerAnimationRight){
-      image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+      if(this.crouching){
+        image(this.playerAnimationCrouch, (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+        this.frameCount = 0;
+      }
+      else{
+        image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+      }
     }
     else if(this.playerAnimationLeft){
       scale(-1, 1);
       offsetThis = -screenX;
-      image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+      if(this.crouching){
+        image(this.playerAnimationCrouch, (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+        this.frameCount = 0;
+      }
+      else{
+        image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+      }
       scale(-1, 1);
     }
     this.frameCount++;

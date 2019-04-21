@@ -9,8 +9,15 @@ class Map{
     this.grassLeftTexture = [assets.grassLeft, 4];
     this.grassRightTexture = [assets.grassRight, 5];
     this.grassFullTexture = [assets.grassFull, 6];
+    this.candle = [assets.candle, 7];
 
-    this.airBlocks = [this.grass1Texture[1], this.grass2Texture[1], this.grassLeftTexture[1], this.grassRightTexture[1], this.grassFullTexture[1], 0]
+    this.airBlocks = [this.grass1Texture[1],
+    this.grass2Texture[1],
+     this.grassLeftTexture[1],
+      this.grassRightTexture[1],
+       this.grassFullTexture[1],
+        this.candle[1],
+         0]
 
     this.scale = 50;
     this.y = 0;
@@ -28,45 +35,49 @@ class Map{
         let drawnX = rowPosition*this.scale + this.xoffset;
         let drawnY = columnNumber*this.scale + this.yoffset;
         if(this.mapTiles[columnNumber][rowPosition] === this.brickTexture[1]){
-          if(drawnX < screenX && drawnX > 0 || drawnX < screenX+this.scale){
-            if(drawnY < screenY && drawnY > 0 || drawnY < screenY+this.scale){
+          if(drawnX < screenX && drawnX > -this.scale){
+            if(drawnY < screenY && drawnY > -this.scale){
               image(this.brickTexture[0], drawnX, drawnY, this.scale, this.scale);
-              this.displayX = this.x + this.xoffset;
             }
           }
         }
         if(this.mapTiles[columnNumber][rowPosition] === this.grass1Texture[1]){
-          if(drawnX < screenX && drawnX > 0 || drawnX < screenX+this.scale){
-            if(drawnY < screenY && drawnY > 0 || drawnY < screenY+this.scale){
+          if(drawnX < screenX && drawnX > -this.scale){
+            if(drawnY < screenY && drawnY > -this.scale){
               image(this.grass1Texture[0], drawnX, drawnY, this.scale, this.scale);
-              this.displayX = this.x + this.xoffset;
             }
           }
         }
         if(this.mapTiles[columnNumber][rowPosition] === this.grass2Texture[1]){
-          if(drawnX < screenX && drawnX > 0 || drawnX < screenX+this.scale){
-            if(drawnY < screenY && drawnY > 0 || drawnY < screenY+this.scale){
+          if(drawnX < screenX && drawnX > -this.scale){
+            if(drawnY < screenY && drawnY > -this.scale){
               image(this.grass2Texture[0], drawnX, drawnY, this.scale, this.scale);
-              this.displayX = this.x + this.xoffset;
             }
           }
         }
         if(this.mapTiles[columnNumber][rowPosition] === this.grassLeftTexture[1]){
-          if(drawnX < screenX && drawnX > 0 || drawnX < screenX+this.scale){
-            if(drawnY < screenY && drawnY > 0 || drawnY < screenY+this.scale){
+          if(drawnX < screenX && drawnX > -this.scale){
+            if(drawnY < screenY && drawnY > -this.scale){
               image(this.grassLeftTexture[0], drawnX, drawnY, this.scale, this.scale);
-              this.displayX = this.x + this.xoffset;
             }
           }
         }
         if(this.mapTiles[columnNumber][rowPosition] === this.grassRightTexture[1]){
-          if(drawnX < screenX && drawnX > 0 || drawnX < screenX+this.scale){
-            if(drawnY < screenY && drawnY > 0 || drawnY < screenY+this.scale){
+          if(drawnX < screenX && drawnX > -this.scale){
+            if(drawnY < screenY && drawnY > -this.scale){
               image(this.grassRightTexture[0], drawnX, drawnY, this.scale, this.scale);
-              this.displayX = this.x + this.xoffset;
             }
           }
         }
+        if(this.mapTiles[columnNumber][rowPosition] === this.candle[1]){
+          if(drawnX < screenX && drawnX > -this.scale){
+            if(drawnY < screenY && drawnY > -this.scale){
+              image(this.candle[0], drawnX, drawnY, this.scale, this.scale);
+            }
+          }
+          this.drawLightParticle(drawnX + this.scale/2, drawnY + this.scale/2, 10, 10);
+        }
+        this.displayX = this.x + this.xoffset;
       }
     }
   }
@@ -87,5 +98,12 @@ class Map{
   adjustTo(x, y){
     this.x = x- screenX/4;
     this.y = y - screenY/4;
+  }
+
+  drawLightParticle(x, y, r, strength){
+    for(let i = 1; i < strength; i++){
+      fill(255, 255, 102, 15-(i* (20/strength)));
+      circle(x, y, r + (i * r*5));
+    }
   }
 }
