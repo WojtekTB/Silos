@@ -86,6 +86,10 @@ class Player{
     this.frameCount = 0;
     this.framekeeper = 0;
     // this.timer = 0;
+
+    //-------player abilities -------
+
+    this.shield = new Shield(this.x + this.xoffset, this.y + this.yoffset, animationsAndInstructions[3]);
   }
 
   //slime
@@ -609,5 +613,13 @@ class Player{
     }
     this.frameCount++;
     // console.log(this.frameCount);
+    if(this.playerAnimationRight){
+      this.shield.run(this.x + this.xoffset + (this.spriteWidth*3)/4, this.y + this.yoffset);
+    }
+    else{
+      scale(-1, 1);
+      this.shield.run(this.x + this.xoffset + (this.spriteWidth*3)/4 - screenX, this.y + this.yoffset);
+      scale(-1, 1);
+    }
   }
 }

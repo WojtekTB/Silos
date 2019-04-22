@@ -8,6 +8,8 @@ var mapScale = screenY;
 var animationsAndInstructions = [[], []];
 var testNPC;
 var stageBuilder;
+// var shield;
+var shieldAnimation = [];
 
 var StageBuilderMode = false;
 
@@ -70,6 +72,11 @@ function preload(){
     }
   }
   animationsAndInstructions[2] = loadImage("assets/crouch.sprite/crouch.png");
+
+  for(let i = 1;  i < 10; i++){//load walking anim
+      shieldAnimation.push(loadImage("assets/shield.sprite/shieldO000" + i + ".png"));
+  }
+  animationsAndInstructions[3] = shieldAnimation;
 }
 
 function setup() {
@@ -81,6 +88,7 @@ function setup() {
   if(StageBuilderMode){
     stageBuilder = new StageBuilder(map2);
   }
+  // shield = new Shield(mouseX, mouseY, shieldAnimation);
   // frameRate(60);
 }
 
@@ -103,6 +111,7 @@ function draw(){
         testNPC.run();
       }
   }
+  // shield.run();
 }
 
 
