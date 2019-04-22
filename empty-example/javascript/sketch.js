@@ -9,6 +9,9 @@ var animationsAndInstructions = [[], []];
 var testNPC;
 var stageBuilder;
 
+var StageBuilderMode = false;
+
+
 var images = {
   brick: null,
   grass1: null,
@@ -75,7 +78,9 @@ function setup() {
   map2 = new Map(mapTiles, images, mapScale);
   player = new Player(map2.scale*2, 400, map2, images.player, animationsAndInstructions);
   playerHud = new PlayerHud(player);
-  stageBuilder = new StageBuilder(map2);
+  if(StageBuilderMode){
+    stageBuilder = new StageBuilder(map2);
+  }
   // frameRate(60);
 }
 
@@ -83,16 +88,21 @@ function draw(){
   // put drawing code here
   background(100);
   noStroke();
-  // player.update();
-  // player.show();
-  // map2.show();
-  // noStroke();
-  // playerHud.show();
-  // playerHud.update();
-  // if(testNPC != null){
-  //   testNPC.run();
-  // }
-  stageBuilder.show();
+  if(StageBuilderMode){
+    stageBuilder.show();
+  }
+  else{
+
+    player.update();
+    player.show();
+    map2.show();
+    noStroke();
+    playerHud.show();
+    playerHud.update();
+    if(testNPC != null){
+        testNPC.run();
+      }
+  }
 }
 
 

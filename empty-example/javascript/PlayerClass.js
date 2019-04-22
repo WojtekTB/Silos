@@ -509,6 +509,12 @@ class Player{
   }
   playAnimation(frame){
     let speed = 3;
+    if(this.playerStateAnimationWalking){
+      speed = 1;
+    }
+    else{
+      speed = 3;
+    }
     if(frame > speed)
     {
       this.frameCount = 0;
