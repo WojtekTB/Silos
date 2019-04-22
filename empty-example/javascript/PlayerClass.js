@@ -42,7 +42,6 @@ class Player{
     this.airBlocks = map.airBlocks;
     this.mapScale = map.scale;
     this.mapTiles = map.mapTiles;
-    console.log(this.mapScale, this.mapTiles);
     //-----player collision values-----
     this.numberOfCollisionPointsOnSide = 10;
     this.collisionPointSidePadding = 3;

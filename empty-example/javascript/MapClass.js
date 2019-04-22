@@ -4,13 +4,13 @@ class Map{
     this.mapTiles = mapTiles;//arrays of arrays of map tiles with 1s and 0s
     this.columns = this.mapTiles[0].length;//get number of columns that map makes up
     this.rows = this.mapTiles.length;//get number of rows in the map
-    this.brickTexture = [assets.brick, 1];//get the brick texture from the
-    this.grass1Texture = [assets.grass1, 2];
-    this.grass2Texture = [assets.grass2, 3];
-    this.grassLeftTexture = [assets.grassLeft, 4];
-    this.grassRightTexture = [assets.grassRight, 5];
-    this.grassFullTexture = [assets.grassFull, 6];
-    this.candle = [assets.candle, 7];
+    this.brickTexture = [assets.brick, 1, "brick"];//get the brick texture from the
+    this.grass1Texture = [assets.grass1, 2, "grass1"];
+    this.grass2Texture = [assets.grass2, 3, "grass2"];
+    this.grassLeftTexture = [assets.grassLeft, 4, "grassLeft"];
+    this.grassRightTexture = [assets.grassRight, 5, "grassRight"];
+    this.grassFullTexture = [assets.grassFull, 6, "grassFull"];
+    this.candle = [assets.candle, 7, "candle"];
 
     this.airBlocks = [this.grass1Texture[1],
     this.grass2Texture[1],
