@@ -329,7 +329,7 @@ class Player{
       this.playerCollisionPointsTop[i].y = this.y - this.spriteHeight/2;
 
       this.playerCollisionPointsBottom[i].x = ((this.x - this.spriteWidth/2) + this.spriteWidth*3/20) + ((i) * (this.spriteWidth - this.spriteWidth*6/20)/(this.numberOfCollisionPointsOnSide-1));;
-      this.playerCollisionPointsBottom[i].y = this.y + this.spriteHeight/2;
+      this.playerCollisionPointsBottom[i].y = (this.y + this.spriteHeight/2);
 
     }
   }
@@ -420,13 +420,13 @@ class Player{
     this.playerCheckerPointsTop[0].y = this.y - this.spriteHeight/2 - extraPadding;
 
     this.playerCheckerPointsBottom[0].x = (this.x - this.spriteWidth/2) + (this.collisionPointSidePadding * 5);
-    this.playerCheckerPointsBottom[0].y = this.y + this.spriteHeight/2 + extraPadding;
+    this.playerCheckerPointsBottom[0].y = this.y + this.spriteHeight/2 - extraPadding;
     for(let i = 1; i < this.numberOfCollisionPointsOnSide; i++){
       this.playerCheckerPointsTop[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*5))/(this.numberOfCollisionPointsOnSide-1)));
       this.playerCheckerPointsTop[i].y = this.y - this.spriteHeight/2 - extraPadding;
 
       this.playerCheckerPointsBottom[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*5))/(this.numberOfCollisionPointsOnSide-1)));
-      this.playerCheckerPointsBottom[i].y = this.y + this.spriteHeight/2 + extraPadding;
+      this.playerCheckerPointsBottom[i].y = this.y + this.spriteHeight/2 - extraPadding;
 
       this.playerCheckerPointsSideR[i].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding + extraPadding;
       this.playerCheckerPointsSideR[i].y = ((this.y - this.spriteHeight/2 + this.collisionPointSidePadding) + i * ((this.spriteHeight-(this.collisionPointSidePadding*5))/(this.numberOfCollisionPointsOnSide-1)));
@@ -486,6 +486,7 @@ class Player{
   }
 }
 
+
   centerOnPlayerY(){
     let centerYoffset = -100;
     this.map.setYOffset(-(this.y - (screenY/2) + centerYoffset));
@@ -504,19 +505,25 @@ class Player{
         this.currentAnimation = this.playerAnimationIdle;
       }
     }
-    else if(this.playerStateAnimationWalking){
+    else if(this.playerStateAnimationWalking && this.overallVelocityX != 0 && this.isNextToB){
       if(this.currentAnimation != this.playerAnimationWalk){
         this.onWhatFrame = 0;
         this.currentAnimation = this.playerAnimationWalk;
       }
     }
+    else{
+      if(this.currentAnimation != this.playerAnimationIdle){
+        this.onWhatFrame = 0;
+        this.currentAnimation = this.playerAnimationIdle;
+      }
+    }
   }
   playAnimation(frame){
     let speed = 3;
-    if(this.playerStateAnimationWalking){
+    if(this.currentAnimation[0] === this.playerAnimationWalk[0]){
       speed = 1;
     }
-    else{
+    else if(this.currentAnimation[0] === this.playerAnimationIdle[0]){
       speed = 3;
     }
     if(frame > speed)
@@ -581,6 +588,7 @@ class Player{
     // }
     this.centerOnPlayerX();
     this.centerOnPlayerY();
+    // console.log(this.inTheAir);
     // console.log(this.timer);
   }
 

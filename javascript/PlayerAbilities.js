@@ -4,11 +4,10 @@ class Shield{
     this.y = y;
     this.scale = 2;
     this.animation = animation;
-    console.log(this.animation);
     this.animationReversed = [];
     for(let i = animation.length-1; i > -1; i--){
       this.animationReversed.push(this.animation[i]);
-      console.log(i);
+      // console.log(i);
     }
     this.spriteW = this.animation[0].width * this.scale;
     this.spriteH = this.animation[0].height * this.scale;
@@ -124,7 +123,7 @@ class Shield{
     this.updatePos(x1, y1);
     this.buttonCheck();
     // console.log(this.state_Open, this.state_Hidden, this.state_Closing, this.state_Opening);
-    console.log(this.state_Open, this.state_Opening, this.state_Hidden, this.state_Closing);
+    // console.log(this.state_Open, this.state_Opening, this.state_Hidden, this.state_Closing);
     if(this.state_Open){
       image(this.animation[this.animation.length-1], this.x, this.y, this.spriteW, this.spriteH);
     }

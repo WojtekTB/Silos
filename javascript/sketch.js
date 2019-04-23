@@ -111,6 +111,7 @@ function draw(){
         testNPC.run();
       }
   }
+  // showDebug();
   // shield.run();
 }
 
