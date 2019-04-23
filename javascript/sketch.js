@@ -1,5 +1,7 @@
 var screenX = window.innerWidth;
 var screenY = window.innerHeight - 20;
+var paused = false;
+
 var player;
 var playerHud;
 var map1;
@@ -10,7 +12,7 @@ var testNPC;
 var stageBuilder;
 // var shield;
 var shieldAnimation = [];
-
+var playerDialogueBoxImage;
 var StageBuilderMode = false;
 
 
@@ -36,8 +38,8 @@ var mapTiles = [
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -77,6 +79,8 @@ function preload(){
       shieldAnimation.push(loadImage("assets/shield.sprite/shieldO000" + i + ".png"));
   }
   animationsAndInstructions[3] = shieldAnimation;
+  animationsAndInstructions[4] = loadImage("assets/textboxes/textbox_main.png");
+
 }
 
 function setup() {
@@ -94,22 +98,25 @@ function setup() {
 
 function draw(){
   // put drawing code here
-  background(100);
-  noStroke();
-  if(StageBuilderMode){
-    stageBuilder.show();
-  }
-  else{
-
-    player.update();
-    player.show();
-    map2.show();
+  if(paused === false){
+    background(100);
     noStroke();
-    playerHud.show();
-    playerHud.update();
-    if(testNPC != null){
+    if(StageBuilderMode){
+      stageBuilder.show();
+    }
+    else{
+
+      player.update();
+      player.show();
+      map2.show();
+      noStroke();
+      playerHud.show();
+      playerHud.update();
+      if(testNPC != null){
         testNPC.run();
       }
+      player.inspection();
+    }
   }
   // showDebug();
   // shield.run();

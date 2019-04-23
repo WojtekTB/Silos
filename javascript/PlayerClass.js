@@ -87,6 +87,9 @@ class Player{
     this.framekeeper = 0;
     // this.timer = 0;
 
+    //----other projects------
+    this.dialogueBox = new PlayerDialogueBox(animationsAndInstructions[4]);
+
     //-------player abilities -------
 
     this.shield = new Shield(this.x + this.xoffset, this.y + this.yoffset, animationsAndInstructions[3]);
@@ -95,6 +98,47 @@ class Player{
   //slime
 
   //normal
+
+  inspectBlock(){
+    let tileX;
+    let tileY;
+    if(this.crouching){
+      if(this.playerAnimationRight){
+        tileX = Math.floor((this.x + this.mapScale) / this.mapScale);
+        tileY = Math.floor((this.y) / this.mapScale);
+        // fill(255, 250, 0);
+        // rect((this.x + this.mapScale)+this.xoffset, (this.y - this.spriteHeight/2)+this.yoffset, 5, 5);
+      }
+      else{
+        tileX = Math.floor((this.x - this.mapScale) / this.mapScale);
+        tileY = Math.floor((this.y) / this.mapScale);
+      }
+    }
+    else{
+      if(this.playerAnimationRight){
+        tileX = Math.floor((this.x + this.mapScale) / this.mapScale);
+        tileY = Math.floor((this.y - this.spriteHeight/2) / this.mapScale);
+        // fill(255, 250, 0);
+        // rect((this.x + this.mapScale)+this.xoffset, (this.y - this.spriteHeight/2)+this.yoffset, 5, 5);
+      }
+      else{
+        tileX = Math.floor((this.x - this.mapScale) / this.mapScale);
+        tileY = Math.floor((this.y - this.spriteHeight/2) / this.mapScale);
+      }
+    }
+    if(this.mapTiles[tileY][tileX] === 0){
+      let textForBox = "Nothing to see here.";
+      this.dialogueBox.open(textForBox);
+    }
+    else if(this.mapTiles[tileY][tileX] === 7){
+      let textForBox = "It's a lit wax candle. It looks like it have been here for a while... I wonder who lit it?";
+      this.dialogueBox.open(textForBox);
+    }
+    else if(this.mapTiles[tileY][tileX] === 1){
+      let textForBox = "Wow a stone brick... another one. I sometimes wonder if I am forever trapped in this prison... or maybe developers just forgot to draw other textures for the map.";
+      this.dialogueBox.open(textForBox);
+    }
+  }
 
   moveToClick(){
     this.x = mouseX;
@@ -158,6 +202,12 @@ class Player{
     }
     else if (keyIsDown("L".charCodeAt(0))) {
       console.table({top: this.isNextToT, bottom: this.isNextToB, left: this.isNextToL, right: this.isNextToR});
+    }
+  }
+
+  inspection(){
+    if (keyIsDown("C".charCodeAt(0))) {
+      this.inspectBlock();
     }
     else{
     this.playerStateAnimationWalking = false;
@@ -330,7 +380,6 @@ class Player{
 
       this.playerCollisionPointsBottom[i].x = ((this.x - this.spriteWidth/2) + this.spriteWidth*3/20) + ((i) * (this.spriteWidth - this.spriteWidth*6/20)/(this.numberOfCollisionPointsOnSide-1));;
       this.playerCollisionPointsBottom[i].y = (this.y + this.spriteHeight/2);
-
     }
   }
 
