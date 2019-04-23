@@ -4,9 +4,14 @@ class Player{
     this.CurrentHP = this.MaxHP;
     this.MaxMP = 100;
     this.CurrentMP = this.MaxMP;
+    //-----sprite-----
+    this.spriteScale = 0.7;
+    this.spriteHeight = (animationsAndInstructions[0][0].height * this.spriteScale);
+    this.spriteWidth = (animationsAndInstructions[0][0].width * this.spriteScale);
+    this.image = images;
     //-----position-----
     this.context = this;
-    this.x = startingX;
+    this.x = startingX + (animationsAndInstructions[0][0].width * this.spriteScale * 4)/20;
     this.y = startingY;
     this.previousX = this.x;
     this.previousY = this.y;
@@ -23,11 +28,6 @@ class Player{
     //-------player frictions------
     this.floorFriction = 1;
     this.airFriction = 0.5;
-    //-----sprite-----
-    this.spriteScale = 0.7;
-    this.spriteHeight = 115 * this.spriteScale;
-    this.spriteWidth = 61 * this.spriteScale;
-    this.image = images;
     //-----player-statuses-----
     this.slime = false;//[0 = standing; 1 = crouching] => start off standing
     this.inTheAir = false;
@@ -36,12 +36,12 @@ class Player{
     this.jumpNumber = this.maxJumps;//number of jumps before having to touch the ground again
     this.onWall = true;
     this.onRightWall = true;
+    this.crouching = false;
     //-----map value-----
     this.map = map;//get the map the player is currently running around in
     this.airBlocks = map.airBlocks;
     this.mapScale = map.scale;
     this.mapTiles = map.mapTiles;
-    console.log(this.mapScale, this.mapTiles);
     //-----player collision values-----
     this.numberOfCollisionPointsOnSide = 10;
     this.collisionPointSidePadding = 3;
@@ -80,14 +80,74 @@ class Player{
     //animations and animationsAndInstructions
     this.playerAnimationIdle = animationsAndInstructions[0];
     this.playerAnimationWalk = animationsAndInstructions[1];
+    this.playerAnimationCrouch = animationsAndInstructions[2];
     this.currentAnimation = [];
     this.onWhatFrame = 0;
     this.frameCount = 0;
     this.framekeeper = 0;
     // this.timer = 0;
+
+    //----other projects------
+    this.dialogueBox = new PlayerDialogueBox(animationsAndInstructions[4]);
+
+    //-------player abilities -------
+
+    this.shield = new Shield(this.x + this.xoffset, this.y + this.yoffset, animationsAndInstructions[3]);
   }
 
   //slime
+
+  //normal
+
+  inspectBlock(){
+    let tileX;
+    let tileY;
+    if(this.crouching){
+      if(this.playerAnimationRight){
+        tileX = Math.floor((this.x + this.mapScale) / this.mapScale);
+        tileY = Math.floor((this.y) / this.mapScale);
+        // fill(255, 250, 0);
+        // rect((this.x + this.mapScale)+this.xoffset, (this.y - this.spriteHeight/2)+this.yoffset, 5, 5);
+      }
+      else{
+        tileX = Math.floor((this.x - this.mapScale) / this.mapScale);
+        tileY = Math.floor((this.y) / this.mapScale);
+      }
+    }
+    else{
+      if(this.playerAnimationRight){
+        tileX = Math.floor((this.x + this.mapScale) / this.mapScale);
+        tileY = Math.floor((this.y - this.spriteHeight/2) / this.mapScale);
+        // fill(255, 250, 0);
+        // rect((this.x + this.mapScale)+this.xoffset, (this.y - this.spriteHeight/2)+this.yoffset, 5, 5);
+      }
+      else{
+        tileX = Math.floor((this.x - this.mapScale) / this.mapScale);
+        tileY = Math.floor((this.y - this.spriteHeight/2) / this.mapScale);
+      }
+    }
+    if(this.mapTiles[tileY][tileX] === 0){
+      let textForBox = "Nothing to see here.";
+      this.dialogueBox.open(textForBox);
+    }
+    else if(this.mapTiles[tileY][tileX] === 7){
+      let textForBox = "It's a lit wax candle. It looks like it have been here for a while... I wonder who lit it?";
+      this.dialogueBox.open(textForBox);
+    }
+    else if(this.mapTiles[tileY][tileX] === 1){
+      let textForBox = "Wow a stone brick... another one. I sometimes wonder if I am forever trapped in this prison... or maybe developers just forgot to draw other textures for the map.";
+      this.dialogueBox.open(textForBox);
+    }
+  }
+
+  moveToClick(){
+    this.x = mouseX;
+    this.y = mouseY;
+    console.log(this.x, this.y);
+    // this.overallVelocityY = 0;
+    this.inTheAir = 1;
+  }
+
   transition(){
     if(this.slime)
     {
@@ -103,26 +163,19 @@ class Player{
       console.log("Slime!");
     }
   }
-
-  //normal
-
-  moveToClick(){
-    this.x = mouseX;
-    this.y = mouseY;
-    console.log(this.x, this.y);
-    // this.overallVelocityY = 0;
-    this.inTheAir = 1;
-  }
-
   controlMovement(){//check for key pressed and move if so
-    if(keyIsDown("X".charCodeAt(0)) && keyIsDown(RIGHT_ARROW)){
-      this.dash(true);
-      this.currentAnimation = this.playerAnimationWalk;
+    if (keyIsDown("S".charCodeAt(0))) {
+      this.crouching = true;
     }
-    else if(keyIsDown("X".charCodeAt(0)) && keyIsDown(LEFT_ARROW)){
-      this.dash(false);
+    else{
+      this.crouching = false;
     }
-    else if (keyIsDown(LEFT_ARROW) || keyIsDown("A".charCodeAt(0))) {
+    if (keyIsDown(LEFT_ARROW) || keyIsDown("A".charCodeAt(0))){
+      if(this.crouching){
+        this.playerAnimationLeft = true;
+        this.playerAnimationRight = false;
+        return;
+      }
       this.overallVelocityX -= this.speed/4;
       if(this.overallVelocityX < -this.speed){
         this.overallVelocityX = -this.speed;
@@ -133,6 +186,11 @@ class Player{
       this.playerStateAnimationIdle = false;
     }
     else if (keyIsDown(RIGHT_ARROW) || keyIsDown("D".charCodeAt(0))) {
+      if(this.crouching){
+        this.playerAnimationLeft = false;
+        this.playerAnimationRight = true;
+        return;
+      }
       this.overallVelocityX += this.speed/4;
       if(this.overallVelocityX > this.speed){
         this.overallVelocityX = this.speed;
@@ -144,6 +202,12 @@ class Player{
     }
     else if (keyIsDown("L".charCodeAt(0))) {
       console.table({top: this.isNextToT, bottom: this.isNextToB, left: this.isNextToL, right: this.isNextToR});
+    }
+  }
+
+  inspection(){
+    if (keyIsDown("C".charCodeAt(0))) {
+      this.inspectBlock();
     }
     else{
     this.playerStateAnimationWalking = false;
@@ -293,29 +357,29 @@ class Player{
   }
 
   collisionPointsUpdate(){
-    this.playerCollisionPointsSideR[0].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding;
+    this.playerCollisionPointsSideR[0].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding - (animationsAndInstructions[0][0].width * this.spriteScale*3)/20;
     this.playerCollisionPointsSideR[0].y = (this.y - this.spriteHeight/2) + this.collisionPointSidePadding;//right
 
-    this.playerCollisionPointsSideL[0].x = this.x - this.spriteWidth/2 - this.collisionPointSidePadding;
+    this.playerCollisionPointsSideL[0].x = (this.x - this.spriteWidth/2 - this.collisionPointSidePadding) + (animationsAndInstructions[0][0].width * this.spriteScale*3)/20;
     this.playerCollisionPointsSideL[0].y = (this.y - this.spriteHeight/2) + this.collisionPointSidePadding;//left
 
-    this.playerCollisionPointsTop[0].x = (this.x - this.spriteWidth/2) + this.collisionPointSidePadding;
+    this.playerCollisionPointsTop[0].x = (this.x - this.spriteWidth/2) + this.spriteWidth*3/20;
     this.playerCollisionPointsTop[0].y = this.y - this.spriteHeight/2;
 
-    this.playerCollisionPointsBottom[0].x = (this.x - this.spriteWidth/2) + this.collisionPointSidePadding;
+    this.playerCollisionPointsBottom[0].x = (this.x - this.spriteWidth/2) + this.spriteWidth*3/20;
     this.playerCollisionPointsBottom[0].y = this.y + this.spriteHeight/2;
     for(let i = 1; i < this.numberOfCollisionPointsOnSide; i++){
-      this.playerCollisionPointsTop[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
-      this.playerCollisionPointsTop[i].y = this.y - this.spriteHeight/2;
-
-      this.playerCollisionPointsBottom[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
-      this.playerCollisionPointsBottom[i].y = this.y + this.spriteHeight/2;
-
-      this.playerCollisionPointsSideR[i].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding;
+      this.playerCollisionPointsSideR[i].x = (this.x + this.spriteWidth/2 + this.collisionPointSidePadding) - (animationsAndInstructions[0][0].width * this.spriteScale*3)/20;
       this.playerCollisionPointsSideR[i].y = ((this.y - this.spriteHeight/2 + this.collisionPointSidePadding) + i * ((this.spriteHeight-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
 
-      this.playerCollisionPointsSideL[i].x = this.x - this.spriteWidth/2 - this.collisionPointSidePadding;
+      this.playerCollisionPointsSideL[i].x = (this.x - this.spriteWidth/2 - this.collisionPointSidePadding) + (animationsAndInstructions[0][0].width * this.spriteScale*3)/20;
       this.playerCollisionPointsSideL[i].y = ((this.y - this.spriteHeight/2 + this.collisionPointSidePadding) + i * ((this.spriteHeight-(this.collisionPointSidePadding*2))/(this.numberOfCollisionPointsOnSide-1)));
+
+      this.playerCollisionPointsTop[i].x = ((this.x - this.spriteWidth/2) + this.spriteWidth*3/20) + ((i) * (this.spriteWidth - this.spriteWidth*6/20)/(this.numberOfCollisionPointsOnSide-1));
+      this.playerCollisionPointsTop[i].y = this.y - this.spriteHeight/2;
+
+      this.playerCollisionPointsBottom[i].x = ((this.x - this.spriteWidth/2) + this.spriteWidth*3/20) + ((i) * (this.spriteWidth - this.spriteWidth*6/20)/(this.numberOfCollisionPointsOnSide-1));;
+      this.playerCollisionPointsBottom[i].y = (this.y + this.spriteHeight/2);
     }
   }
 
@@ -394,7 +458,7 @@ class Player{
   }
 
   checkerPointsUpdate(){
-    let extraPadding = 5;
+    let extraPadding = -4;
     this.playerCheckerPointsSideR[0].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding + extraPadding;
     this.playerCheckerPointsSideR[0].y = (this.y - this.spriteHeight/2) + (this.collisionPointSidePadding * 5);//right
 
@@ -405,13 +469,13 @@ class Player{
     this.playerCheckerPointsTop[0].y = this.y - this.spriteHeight/2 - extraPadding;
 
     this.playerCheckerPointsBottom[0].x = (this.x - this.spriteWidth/2) + (this.collisionPointSidePadding * 5);
-    this.playerCheckerPointsBottom[0].y = this.y + this.spriteHeight/2 + extraPadding;
+    this.playerCheckerPointsBottom[0].y = this.y + this.spriteHeight/2 - extraPadding;
     for(let i = 1; i < this.numberOfCollisionPointsOnSide; i++){
       this.playerCheckerPointsTop[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*5))/(this.numberOfCollisionPointsOnSide-1)));
       this.playerCheckerPointsTop[i].y = this.y - this.spriteHeight/2 - extraPadding;
 
       this.playerCheckerPointsBottom[i].x = ((this.x - this.spriteWidth/2 + this.collisionPointSidePadding) + i * ((this.spriteWidth-(this.collisionPointSidePadding*5))/(this.numberOfCollisionPointsOnSide-1)));
-      this.playerCheckerPointsBottom[i].y = this.y + this.spriteHeight/2 + extraPadding;
+      this.playerCheckerPointsBottom[i].y = this.y + this.spriteHeight/2 - extraPadding;
 
       this.playerCheckerPointsSideR[i].x = this.x + this.spriteWidth/2 + this.collisionPointSidePadding + extraPadding;
       this.playerCheckerPointsSideR[i].y = ((this.y - this.spriteHeight/2 + this.collisionPointSidePadding) + i * ((this.spriteHeight-(this.collisionPointSidePadding*5))/(this.numberOfCollisionPointsOnSide-1)));
@@ -422,12 +486,10 @@ class Player{
 
   }
 
-
   translate(x, y){
   this.xoffset += x;
   this.yoffset += y;
 }
-
   translateScreen(x, y){
   this.map.translate(x, y);
   this.translate(x, y);
@@ -463,7 +525,6 @@ class Player{
     }
   }
 }
-
   checkIfInAir(){
     if(this.isNextToB === false && this.isNextToT === false && this.isNextToL === false && this.isNextToR === false){
     this.inTheAir = true;
@@ -473,6 +534,7 @@ class Player{
     this.inTheAir = false;
   }
 }
+
 
   centerOnPlayerY(){
     let centerYoffset = -100;
@@ -487,17 +549,33 @@ class Player{
 
   changeAnimation(){
     if(this.playerStateAnimationIdle){
-      this.currentAnimation = this.playerAnimationIdle;
+      if(this.currentAnimation != this.playerAnimationIdle){
+        this.onWhatFrame = 0;
+        this.currentAnimation = this.playerAnimationIdle;
+      }
     }
-    else if(this.playerStateAnimationWalking){
-      this.currentAnimation = this.playerAnimationWalk;
+    else if(this.playerStateAnimationWalking && this.overallVelocityX != 0 && this.isNextToB){
+      if(this.currentAnimation != this.playerAnimationWalk){
+        this.onWhatFrame = 0;
+        this.currentAnimation = this.playerAnimationWalk;
+      }
+    }
+    else{
+      if(this.currentAnimation != this.playerAnimationIdle){
+        this.onWhatFrame = 0;
+        this.currentAnimation = this.playerAnimationIdle;
+      }
     }
   }
-
   playAnimation(frame){
     let speed = 3;
-
-    if(frame === speed)
+    if(this.currentAnimation[0] === this.playerAnimationWalk[0]){
+      speed = 1;
+    }
+    else if(this.currentAnimation[0] === this.playerAnimationIdle[0]){
+      speed = 3;
+    }
+    if(frame > speed)
     {
       this.frameCount = 0;
       if(this.onWhatFrame === this.currentAnimation.length -1 ){
@@ -510,6 +588,16 @@ class Player{
     }
     else{
       return this.currentAnimation[this.onWhatFrame];
+    }
+  }
+
+  interact(){//incomplete
+    let lengthInFront;
+    if(this.playerAnimationRight){
+      lengthInFront = 20;
+    }
+    else{
+      lengthInFront = 20;
     }
   }
 
@@ -549,6 +637,7 @@ class Player{
     // }
     this.centerOnPlayerX();
     this.centerOnPlayerY();
+    // console.log(this.inTheAir);
     // console.log(this.timer);
   }
 
@@ -559,15 +648,35 @@ class Player{
     this.changeAnimation();
     let offsetThis = 0;
     if(this.playerAnimationRight){
-      image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+      if(this.crouching){
+        image(this.playerAnimationCrouch, (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+        this.frameCount = 0;
+      }
+      else{
+        image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+      }
     }
     else if(this.playerAnimationLeft){
       scale(-1, 1);
       offsetThis = -screenX;
-      image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+      if(this.crouching){
+        image(this.playerAnimationCrouch, (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+        this.frameCount = 0;
+      }
+      else{
+        image(this.playAnimation(this.frameCount), (this.x - (this.spriteWidth / 2)) + this.xoffset + offsetThis, (this.y - (this.spriteHeight / 2)) + this.yoffset, this.spriteWidth, this.spriteHeight);
+      }
       scale(-1, 1);
     }
     this.frameCount++;
     // console.log(this.frameCount);
+    if(this.playerAnimationRight){
+      this.shield.run(this.x + this.xoffset + (this.spriteWidth*3)/4, this.y + this.yoffset);
+    }
+    else{
+      scale(-1, 1);
+      this.shield.run(this.x + this.xoffset + (this.spriteWidth*3)/4 - screenX, this.y + this.yoffset);
+      scale(-1, 1);
+    }
   }
 }
