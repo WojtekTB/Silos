@@ -630,15 +630,8 @@ class Player{
     }
     this.displayX = this.x + this.xoffset;
     this.checkIfInAir();
-    // if(this.y > screenY - this.spriteHeight){//when character y is at the floor limit
-    //   this.y = screenY - this.spriteHeight;
-    //   this.overallVelocityY = 0;
-    //   this.jumpNumber = this.maxJumps;
-    // }
     this.centerOnPlayerX();
     this.centerOnPlayerY();
-    // console.log(this.inTheAir);
-    // console.log(this.timer);
   }
 
   show(){//render
