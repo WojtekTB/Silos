@@ -106,7 +106,6 @@ function draw(){
       stageBuilder.show();
     }
     else{
-
       player.update();
       player.show();
       map2.show();
@@ -117,6 +116,10 @@ function draw(){
         testNPC.run();
       }
       player.inspection();
+      let fps = frameRate();
+  fill(255);
+  // stroke(0);
+  text("FPS: " + fps.toFixed(2), 5, height - 10);
     }
   }
   // showDebug();
