@@ -87,7 +87,10 @@ function preload(){
 function setup() {
   createCanvas(screenX, screenY);
   map2 = new Map(mapTiles, blockImages, mapScale);
-  player = new Player(map2.scale*2, 400, map2, blockImages.player, animationsAndInstructions);
+  player = new Player(map2.scale, map2.scale*2, map2);
+  player.addAnimation("standing", animationsAndInstructions[0], 0.5);
+  player.addAnimation("walking", animationsAndInstructions[1], 0.5);
+  player.setAnimation("standing");
   playerHud = new PlayerHud(player);
   if(StageBuilderMode){
     stageBuilder = new StageBuilder(map2);
@@ -99,33 +102,47 @@ function setup() {
 }
 
 function draw(){
-  // put drawing code here
-  if(paused === false){
-    background(100);
-    noStroke();
-    if(StageBuilderMode){
-      stageBuilder.show();
-    }
-    else{
-      player.update();
-      player.show();
-      map2.show();
-      noStroke();
-      playerHud.show();
-      playerHud.update();
-      if(testNPC != null){
-        testNPC.run();
-      }
-      player.inspection();
-      let fps = frameRate();
-  fill(255);
-  // stroke(0);
-  text("FPS: " + fps.toFixed(2), 5, height - 10);
-    }
-  }
-  // showDebug();
-  // shield.run();
+  background(70);
+  map2.show()
+  player.show();
+  showDebug();
 }
+
+function showDebug(){
+  stroke(0);
+  fill(255, 255, 255);
+  text(`X: ${player.x}\nY: ${player.y}\nVX: ${player.vx}\nVY: ${player.vy}\nAnimation: ${player.animationKey}\nBlocks shown: ${map2.numOfBlocksShow}`, 0, 0, 200, 200);
+  // rect(0, 0, 200, 200);
+}
+
+// function draw(){
+//   // put drawing code here
+//   if(paused === false){
+//     background(100);
+//     noStroke();
+//     if(StageBuilderMode){
+//       stageBuilder.show();
+//     }
+//     else{
+//       player.update();
+//       player.show();
+//       map2.show();
+//       noStroke();
+//       playerHud.show();
+//       playerHud.update();
+//       if(testNPC != null){
+//         testNPC.run();
+//       }
+//       player.inspection();
+//       let fps = frameRate();
+//   fill(255);
+//   // stroke(0);
+//   text("FPS: " + fps.toFixed(2), 5, height - 10);
+//     }
+//   }
+//   // showDebug();
+//   // shield.run();
+// }
 
 
 function keyPressed(){
@@ -152,25 +169,25 @@ function keyPressed(){
   }
 }
 
-function showDebug(){
-  for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
-    fill(`rgb(255, 0, 0)`);
-    rect(player.playerCollisionPointsBottom[i].x + player.xoffset, player.playerCollisionPointsBottom[i].y + player.yoffset, 2, 2);
-    fill(`rgb(30, 30, 255)`);
-    rect(player.playerCollisionPointsTop[i].x + player.xoffset, player.playerCollisionPointsTop[i].y + player.yoffset, 2, 2);
-    fill(`rgb(255, 0, 255)`);
-    rect(player.playerCollisionPointsSideR[i].x + player.xoffset, player.playerCollisionPointsSideR[i].y + player.yoffset, 2, 2);
-    fill(`rgb(0, 255, 0)`);
-    rect(player.playerCollisionPointsSideL[i].x + player.xoffset, player.playerCollisionPointsSideL[i].y + player.yoffset, 2, 2);
-  }
-  for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
-    fill(`rgb(255, 0, 0)`);
-    rect(player.playerCheckerPointsBottom[i].x + player.xoffset, player.playerCheckerPointsBottom[i].y + player.yoffset, 2, 2);
-    fill(`rgb(30, 30, 255)`);
-    rect(player.playerCheckerPointsTop[i].x + player.xoffset, player.playerCheckerPointsTop[i].y + player.yoffset, 2, 2);
-    fill(`rgb(255, 0, 255)`);
-    rect(player.playerCheckerPointsSideR[i].x + player.xoffset, player.playerCheckerPointsSideR[i].y + player.yoffset, 2, 2);
-    fill(`rgb(0, 255, 0)`);
-    rect(player.playerCheckerPointsSideL[i].x + player.xoffset, player.playerCheckerPointsSideL[i].y + player.yoffset, 2, 2);
-  }
-}
+// function showDebug(){
+//   for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
+//     fill(`rgb(255, 0, 0)`);
+//     rect(player.playerCollisionPointsBottom[i].x + player.xoffset, player.playerCollisionPointsBottom[i].y + player.yoffset, 2, 2);
+//     fill(`rgb(30, 30, 255)`);
+//     rect(player.playerCollisionPointsTop[i].x + player.xoffset, player.playerCollisionPointsTop[i].y + player.yoffset, 2, 2);
+//     fill(`rgb(255, 0, 255)`);
+//     rect(player.playerCollisionPointsSideR[i].x + player.xoffset, player.playerCollisionPointsSideR[i].y + player.yoffset, 2, 2);
+//     fill(`rgb(0, 255, 0)`);
+//     rect(player.playerCollisionPointsSideL[i].x + player.xoffset, player.playerCollisionPointsSideL[i].y + player.yoffset, 2, 2);
+//   }
+//   for(let i = 0; i < player.numberOfCollisionPointsOnSide; i++){
+//     fill(`rgb(255, 0, 0)`);
+//     rect(player.playerCheckerPointsBottom[i].x + player.xoffset, player.playerCheckerPointsBottom[i].y + player.yoffset, 2, 2);
+//     fill(`rgb(30, 30, 255)`);
+//     rect(player.playerCheckerPointsTop[i].x + player.xoffset, player.playerCheckerPointsTop[i].y + player.yoffset, 2, 2);
+//     fill(`rgb(255, 0, 255)`);
+//     rect(player.playerCheckerPointsSideR[i].x + player.xoffset, player.playerCheckerPointsSideR[i].y + player.yoffset, 2, 2);
+//     fill(`rgb(0, 255, 0)`);
+//     rect(player.playerCheckerPointsSideL[i].x + player.xoffset, player.playerCheckerPointsSideL[i].y + player.yoffset, 2, 2);
+//   }
+// }
