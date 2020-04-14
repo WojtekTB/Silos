@@ -74,7 +74,7 @@ function preload(){
       animationsAndInstructions[1].push(loadImage("assets/walk.sprite/walking000" + i + ".png"));
     }
   }
-  animationsAndInstructions[2] = loadImage("assets/crouch.sprite/crouch.png");
+  animationsAndInstructions[2] = [loadImage("assets/crouch.sprite/crouch.png")];
 
   for(let i = 1;  i < 10; i++){//load walking anim
       shieldAnimation.push(loadImage("assets/shield.sprite/shieldO000" + i + ".png"));
@@ -90,6 +90,7 @@ function setup() {
   player = new Player(map2.scale, map2.scale*2, map2);
   player.addAnimation("standing", animationsAndInstructions[0], 0.5);
   player.addAnimation("walking", animationsAndInstructions[1], 0.5);
+  player.addAnimation("crouching", animationsAndInstructions[2], 1);
   player.setAnimation("standing");
   playerHud = new PlayerHud(player);
   if(StageBuilderMode){

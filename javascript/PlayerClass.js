@@ -104,7 +104,7 @@ class Player{
     this.animationSpeed = 1;
     this.spriteWidth = this.map.scale * 1.5;
     this.spriteHeight = this.map.scale * 2;
-    this.lastDirectionRight = true;
+    this.facingRight = true;
     this.animationKey = ''
     //where to show the character on the screen
     this.showX = screenX/2 - this.spriteWidth/2;
@@ -126,6 +126,7 @@ class Player{
     //player states
     this.state_canJump = false;
     this.state_inAir = false;
+    this.state_crouch = false;
 
     
   }
@@ -170,19 +171,24 @@ class Player{
   }
  
   movementControlls(){
-    if(keyIsDown(LEFT_ARROW)){
-      this.addVelLeft(this.movementSpeed);
-    }
-    if(keyIsDown(RIGHT_ARROW)){
-      this.addVelRight(this.movementSpeed);
-    }
-    if(keyIsDown(UP_ARROW)){
-      if(this.state_canJump){
-        this.jump();
+    if(!this.state_crouch){
+      if(keyIsDown(LEFT_ARROW)){
+        this.addVelLeft(this.movementSpeed);
+      }
+      if(keyIsDown(RIGHT_ARROW)){
+        this.addVelRight(this.movementSpeed);
+      }
+      if(keyIsDown(UP_ARROW)){
+        if(this.state_canJump){
+          this.jump();
+        }
       }
     }
     if(keyIsDown(DOWN_ARROW)){
-      this.addVelDown(this.movementSpeed);
+      this.setAnimation("crouching");
+      this.state_crouch = true;
+    }else{
+      this.state_crouch = false;
     }
   }
   
@@ -200,17 +206,17 @@ class Player{
 
   update(){
     this.animationCounter++;
+    if(Math.floor(Math.abs(this.vx)) != 0){
+      this.setAnimation("walking")
+    }else{
+      this.setAnimation("standing")
+    }
     //update position
     this.movementControlls();
     //gravity
     this.addVelDown(this.gravity);
     this.velDecay();
     this.checkForCollision();
-    if(Math.floor(Math.abs(this.vx)) != 0){
-      this.setAnimation("walking")
-    }else{
-      this.setAnimation("standing")
-    }
     this.map.setXOffset(-this.x + this.showX)
     this.map.setYOffset(-this.y + this.showY)
   }
@@ -218,12 +224,22 @@ class Player{
   show(){
     this.update();
     if(this.vx < 0){
+      this.facingRight = false;
       scale(-1, 1);
-      image(this.currentAnimation[Math.floor((this.animationCounter * this.animationSpeed) % this.currentAnimation.length)], -this.showX, this.showY + colisionMargin * 3.5, -this.spriteWidth, this.spriteHeight);
+      image(this.currentAnimation[Math.floor((this.animationCounter * this.animationSpeed) % this.currentAnimation.length)], -this.showX, this.showY + colisionMargin * 2, -this.spriteWidth, this.spriteHeight);
     }
-    else{
-      image(this.currentAnimation[Math.floor((this.animationCounter * this.animationSpeed) % this.currentAnimation.length)], this.showX, this.showY + colisionMargin * 3.5, this.spriteWidth, this.spriteHeight);
+    else if(this.vx > 0){
+      this.facingRight = true;
+      image(this.currentAnimation[Math.floor((this.animationCounter * this.animationSpeed) % this.currentAnimation.length)], this.showX, this.showY + colisionMargin * 2, this.spriteWidth, this.spriteHeight);
       // scale(-1, 1);
+    }else{
+      if(this.facingRight){
+        image(this.currentAnimation[Math.floor((this.animationCounter * this.animationSpeed) % this.currentAnimation.length)], this.showX, this.showY + colisionMargin * 2, this.spriteWidth, this.spriteHeight);
+      }else{
+        scale(-1, 1);
+        image(this.currentAnimation[Math.floor((this.animationCounter * this.animationSpeed) % this.currentAnimation.length)], -this.showX, this.showY + colisionMargin * 2, -this.spriteWidth, this.spriteHeight);
+        scale(-1, 1);
+      }
     }
     if(this.vx < 0){
       scale(-1, 1);
@@ -249,9 +265,9 @@ class Player{
       if(this.vy > 0){
         yCheckCord = this.spriteHeight + (margin * 2);
       }
-      fill(255, 0, 0);
+      // fill(255, 0, 0);
       for(let i = 0; i < this.colisionPointsHeight + 1; i++){
-        rect(this.showX + xCheckCord, this.showY + i * (this.spriteHeight/this.colisionPointsHeight), 5, 5);
+        // rect(this.showX + xCheckCord, this.showY + i * (this.spriteHeight/this.colisionPointsHeight), 5, 5);
         if(this.map.checkIfSolidBlock(this.x + xCheckCord, this.y + i * (this.spriteHeight/this.colisionPointsHeight))){
           this.x = this.prevX;
           this.vx = 0;
@@ -259,9 +275,9 @@ class Player{
           break;
         }
       }
-      fill(0, 0, 255);
+      // fill(0, 0, 255);
       for(let i = 0; i < this.colisionPointsWidth + 1; i++){
-        rect(this.showX + i * (this.spriteWidth/this.colisionPointsWidth), this.showY + yCheckCord, 5, 5);
+        // rect(this.showX + i * (this.spriteWidth/this.colisionPointsWidth), this.showY + yCheckCord, 5, 5);
         if(this.map.checkIfSolidBlock(this.x + i * (this.spriteWidth/this.colisionPointsWidth), this.y + yCheckCord)){
           this.y = this.prevY;
           this.vy = 0;
