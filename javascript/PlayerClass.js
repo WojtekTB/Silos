@@ -116,11 +116,16 @@ class Player{
     this.prevY = this.y;
     this.vx = 0;
     this.vy = 0;
-    this.decayRate = 0.5;
-    this.movementSpeed = 10;
+    this.decayRate = 0.9;
+    this.movementSpeed = 1;
+    this.gravity = 1;
+    this.jumpMagnitude = 20;
     //colision vars
     this.colisionPointsWidth = 2 + Math.floor(this.spriteWidth/this.map.scale);//how many collision points you need on bottom and top
     this.colisionPointsHeight = 2 + Math.floor(this.spriteHeight/this.map.scale);//how many collision points you need on left and right
+    //player states
+    this.state_canJump = false;
+    this.state_inAir = false;
 
     
   }
@@ -172,20 +177,34 @@ class Player{
       this.addVelRight(this.movementSpeed);
     }
     if(keyIsDown(UP_ARROW)){
-      this.addVelUp(this.movementSpeed);
+      if(this.state_canJump){
+        this.jump();
+      }
     }
     if(keyIsDown(DOWN_ARROW)){
       this.addVelDown(this.movementSpeed);
     }
+  }
+  
+  jump(){
+    this.addVelUp(this.jumpMagnitude);
+    if(Math.floor(Math.abs(this.vx)) != 0){
+        if(this.vx > 0){
+          this.addVelRight(this.movementSpeed);
+        }else{
+          this.addVelLeft(this.movementSpeed);
+        }
+    }
+    this.state_canJump = false;
   }
 
   update(){
     this.animationCounter++;
     //update position
     this.movementControlls();
-    this.velDecay();
     //gravity
-    this.addVelDown(20);
+    this.addVelDown(this.gravity);
+    this.velDecay();
     this.checkForCollision();
     if(Math.floor(Math.abs(this.vx)) != 0){
       this.setAnimation("walking")
@@ -236,6 +255,7 @@ class Player{
         if(this.map.checkIfSolidBlock(this.x + xCheckCord, this.y + i * (this.spriteHeight/this.colisionPointsHeight))){
           this.x = this.prevX;
           this.vx = 0;
+          this.state_inAir = false;
           break;
         }
       }
@@ -245,9 +265,12 @@ class Player{
         if(this.map.checkIfSolidBlock(this.x + i * (this.spriteWidth/this.colisionPointsWidth), this.y + yCheckCord)){
           this.y = this.prevY;
           this.vy = 0;
+          this.state_canJump = true;
+          this.state_inAir = false;
           break;
         }
       }
+      this.state_inAir = true;
     }
 
   }
