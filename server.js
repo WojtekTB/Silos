@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
 
     setInterval(() => {
         socket.broadcast.emit('playerList', { playerList: players });
-    }, 60 / 1000);//60 times per second, as in per frame
+    }, 1000);//60 times per second, as in per frame
 
 });
 
