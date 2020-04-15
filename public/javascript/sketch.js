@@ -29,7 +29,16 @@ var blockImages = {
 var multiplayer = true;
 var socket;
 var uniqueUserId;
-var playerList = [];
+var playerList = [
+  // {
+  //   id: "qwerty",
+  //   x: 500,
+  //   y: 500,
+  //   animationState: "standing",
+  //   facingRight: false
+  // }
+];
+var allAnimations = [];
 
 var mapTiles = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -108,13 +117,15 @@ function setup() {
   createCanvas(screenX, screenY);
   map2 = new Map(mapTiles, blockImages, mapScale);
   player = new Player(map2.scale, map2.scale * 2, map2);
-  player.addAnimation("standing", animations.standing, 0.3);
-  player.addAnimation("walking", animations.walking, 0.5);
-  player.addAnimation("crouching", animations.crouching, 1);
-  player.addAnimation("jumping_up", animations.jumping_up, 1);
-  player.addAnimation("jumping_mid", animations.jumping_mid, 1);
-  player.addAnimation("jumping_down", animations.jumping_down, 1);
+  createAnimation("standing", animations.standing, 0.3);
+  createAnimation("walking", animations.walking, 0.5);
+  createAnimation("crouching", animations.crouching, 1);
+  createAnimation("jumping_up", animations.jumping_up, 1);
+  createAnimation("jumping_mid", animations.jumping_mid, 1);
+  createAnimation("jumping_down", animations.jumping_down, 1);
+  player.initiateAllAnimations(allAnimations);
   player.setAnimation("standing");
+
   playerHud = new PlayerHud(player);
   if (StageBuilderMode) {
     stageBuilder = new StageBuilder(map2);
@@ -152,8 +163,9 @@ function draw() {
       if (player.id === uniqueUserId) {
         continue;
       }
-      fill(255, 0, 0);
-      rect(player.x + map2.xoffset, player.y + map2.yoffset, 100, 100);
+      // fill(255, 0, 0);
+      // rect(player.x + map2.xoffset, player.y + map2.yoffset, 100, 100);
+      showPlayer(player);
     }
   }
   player.show();
@@ -181,6 +193,7 @@ function keyPressed() {
 }
 
 function showDebug() {
+  textAlign(LEFT);
   stroke(0);
   fill(255, 255, 255);
   text(`
@@ -193,6 +206,46 @@ function showDebug() {
   User id: ${uniqueUserId}
   `, 0, 0, 200, 200);
   // rect(0, 0, 200, 200);
+}
+
+function createAnimation(key, frames, speed) {
+  allAnimations.push({ key: key, frames: frames, speed: speed });
+}
+
+//show other players
+function showPlayer(otherUser) {
+  let playerAnimation;
+  for (let anim of allAnimations) {
+    if (anim.key === otherUser.animationState) {
+      playerAnimation = anim.frames;
+    }
+  }
+
+  if (playerAnimation === null) {
+    throw `Animation with key ${otherUser.animationState} was not found`;
+  }
+  let translateToX = otherUser.x + map2.xoffset;
+  let translateToY = otherUser.y + map2.yoffset;
+
+  let spriteW = player.spriteWidth;
+  let spriteH = player.spriteHeight;
+
+  fill(255);
+  textAlign(CENTER);
+
+  translate(translateToX, translateToY);
+  if (otherUser.facingRight) {
+    image(playerAnimation[0], 0, colisionMargin * 2, spriteW, spriteH);
+    text(otherUser.id, spriteW / 2, 0);
+  } else {
+    scale(-1, 1);
+    image(playerAnimation[0], -spriteW, colisionMargin * 2, spriteW, spriteH);
+    text(otherUser.id, -spriteW / 2, 0);
+    scale(-1, 1);
+  }
+
+
+  translate(-translateToX, -translateToY);
 }
 
 //communication with server functions

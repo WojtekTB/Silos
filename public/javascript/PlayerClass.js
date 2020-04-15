@@ -43,8 +43,14 @@ class Player {
     this.id = id;
   }
 
-  getId(id) {
+  getId() {
     return this.id;
+  }
+
+  initiateAllAnimations(arrayOfAnimationObjects) {
+    for (let anim of arrayOfAnimationObjects) {
+      this.addAnimation(anim.key, anim.frames, anim.speed);
+    }
   }
 
   addAnimation(key, animationArray, animationSpeed) {
