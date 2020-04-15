@@ -7,6 +7,8 @@ class Map{
     this.scale = scale;
     this.map = [];
     this.numOfBlocksShow = 0;
+    
+    this.hurtboxes = [];
 
     let tileKeys = Object.keys(tileImages);
     for(let y = 0; y < this.rows; y++){
@@ -47,6 +49,28 @@ class Map{
         }
       }
     }
+    for(let i = 0; i < this.hurtboxes.length; i++){
+      this.hurtboxes[i].update();
+      if(this.hurtboxes[i].life < 1){
+        this.hurtboxes.splice(i, 1);
+      }else{
+        this.hurtboxes[i].show(this.xoffset, this.yoffset);
+      }
+
+    }
+  }
+
+  showEffects(){
+    for(let y = 0; y < this.rows; y++){
+      for(let x = 0; x < this.columns; x++){
+        let tile = this.map[y][x];
+        if(tile.lightStrength > 0){
+          this.drawLightParticle(x *  this.scale + this.xoffset + this.scale/2, y *  this.scale + this.yoffset + this.scale/2, this.scale/2, tile.lightStrength);
+          // this.drawLightParticle(innerWidth/2, innerHeight/2, this.scale, tile.lightStrength);
+        }
+      }
+    }
+
   }
 
   translate(xoffset, yoffset){
@@ -81,6 +105,10 @@ class Map{
     }else{
       return this.map[tileY][tileX].solid;
     }
+  }
+
+  addHurtBox(x, y, w, h, life){
+    this.hurtboxes.push(new HurtBox(x, y, w, h, life));
   }
 }
 

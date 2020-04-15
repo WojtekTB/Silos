@@ -7,7 +7,7 @@ var playerHud;
 var map1;
 var map2;
 var mapScale = 50;
-var animationsAndInstructions = [[], []];
+var animations = {};
 var testNPC;
 var stageBuilder;
 // var shield;
@@ -50,37 +50,49 @@ var mapTiles = [
 
 
 function preload(){
-  blockImages.brick = {image: loadImage('assets/blocks/brick.png'), solid: true};
-  blockImages.grass1 = {image: loadImage('assets/blocks/grass1.png'), solid: false};
-  blockImages.grass2 = {image: loadImage('assets/blocks/grass2.png'), solid: false};
-  blockImages.grassLeft = {image: loadImage('assets/blocks/grassLeft.png'), solid: false};
-  blockImages.grassRight = {image: loadImage('assets/blocks/grassRight.png'), solid: false};
-  blockImages.grassFull = {image: loadImage('assets/blocks/grassFull.png'), solid: false};
-  blockImages.schoolDesk = {image: loadImage('assets/blocks/chair.png'), solid: false};
-  blockImages.candle = {image: loadImage('assets/blocks/candle.png'), solid: false};
+  blockImages.brick = {image: loadImage('assets/blocks/brick.png'), solid: true, lightStrength: 0};
+  blockImages.grass1 = {image: loadImage('assets/blocks/grass1.png'), solid: false, lightStrength: 0};
+  blockImages.grass2 = {image: loadImage('assets/blocks/grass2.png'), solid: false, lightStrength: 0};
+  blockImages.grassLeft = {image: loadImage('assets/blocks/grassLeft.png'), solid: false, lightStrength: 0};
+  blockImages.grassRight = {image: loadImage('assets/blocks/grassRight.png'), solid: false, lightStrength: 0};
+  blockImages.grassFull = {image: loadImage('assets/blocks/grassFull.png'), solid: false, lightStrength: 0};
+  blockImages.schoolDesk = {image: loadImage('assets/blocks/chair.png'), solid: false, lightStrength: 0};
+  blockImages.candle = {image: loadImage('assets/blocks/candle.png'), solid: false, lightStrength: 5};
+
+  animations.standing = [];
+  animations.walking = [];
+  animations.crouching = [];
+  animations.jumping_up = [];
+  animations.jumping_mid = [];
+  animations.jumping_down = [];
+  animations.attack = [];
   for(let i = 1;  i < 12; i++){//load idle anim
     if(i > 9){
-      animationsAndInstructions[0].push(loadImage("assets/idle.sprite/idle00" + i + ".png"));
+      animations.standing.push(loadImage("assets/idle.sprite/idle00" + i + ".png"));
     }
     else{
-      animationsAndInstructions[0].push(loadImage("assets/idle.sprite/idle000" + i + ".png"));
+      animations.standing.push(loadImage("assets/idle.sprite/idle000" + i + ".png"));
     }
   }
   for(let i = 1;  i < 17; i++){//load walking anim
     if(i > 9){
-      animationsAndInstructions[1].push(loadImage("assets/walk.sprite/walking00" + i + ".png"));
+      animations.walking.push(loadImage("assets/walk.sprite/walking00" + i + ".png"));
     }
     else{
-      animationsAndInstructions[1].push(loadImage("assets/walk.sprite/walking000" + i + ".png"));
+      animations.walking.push(loadImage("assets/walk.sprite/walking000" + i + ".png"));
     }
   }
-  animationsAndInstructions[2] = [loadImage("assets/crouch.sprite/crouch.png")];
+  animations.crouching = [loadImage("assets/crouch.sprite/crouch.png")];
+  animations.jumping_up = [loadImage("assets/jump.sprite/jump_up.png")];
+  animations.jumping_mid = [loadImage("assets/jump.sprite/jump_middle.png")];
+  animations.jumping_down = [loadImage("assets/jump.sprite/jump_down.png")];
+  animations.attack = [loadImage("assets/basic_attack.sprite/basic_attack.png")];
 
   for(let i = 1;  i < 10; i++){//load walking anim
       shieldAnimation.push(loadImage("assets/shield.sprite/shieldO000" + i + ".png"));
   }
-  animationsAndInstructions[3] = shieldAnimation;
-  animationsAndInstructions[4] = loadImage("assets/textboxes/textbox_main.png");
+  // animationsAndInstructions[3] = shieldAnimation;
+  // animationsAndInstructions[4] = loadImage("assets/textboxes/textbox_main.png");
 
 }
 
@@ -88,9 +100,12 @@ function setup() {
   createCanvas(screenX, screenY);
   map2 = new Map(mapTiles, blockImages, mapScale);
   player = new Player(map2.scale, map2.scale*2, map2);
-  player.addAnimation("standing", animationsAndInstructions[0], 0.5);
-  player.addAnimation("walking", animationsAndInstructions[1], 0.5);
-  player.addAnimation("crouching", animationsAndInstructions[2], 1);
+  player.addAnimation("standing", animations.standing, 0.3);
+  player.addAnimation("walking", animations.walking, 0.5);
+  player.addAnimation("crouching", animations.crouching, 1);
+  player.addAnimation("jumping_up", animations.jumping_up, 1);
+  player.addAnimation("jumping_mid", animations.jumping_mid, 1);
+  player.addAnimation("jumping_down", animations.jumping_down, 1);
   player.setAnimation("standing");
   playerHud = new PlayerHud(player);
   if(StageBuilderMode){
@@ -106,6 +121,7 @@ function draw(){
   background(70);
   map2.show()
   player.show();
+  map2.showEffects();
   showDebug();
 }
 

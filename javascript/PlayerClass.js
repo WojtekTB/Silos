@@ -33,6 +33,7 @@ class Player{
     this.state_canJump = false;
     this.state_inAir = false;
     this.state_crouch = false;
+    this.attackCooldown = 0;
 
     
   }
@@ -96,15 +97,18 @@ class Player{
     }else{
       this.state_crouch = false;
     }
+    if(keyIsDown("A".charCodeAt())){
+      this.attack();
+    }
   }
   
   jump(){
     this.addVelUp(this.jumpMagnitude);
     if(Math.floor(Math.abs(this.vx)) != 0){
         if(this.vx > 0){
-          this.addVelRight(this.movementSpeed);
+          this.addVelRight(this.movementSpeed * 5);
         }else{
-          this.addVelLeft(this.movementSpeed);
+          this.addVelLeft(this.movementSpeed * 5);
         }
     }
     this.state_canJump = false;
@@ -112,7 +116,18 @@ class Player{
 
   update(){
     this.animationCounter++;
-    if(Math.floor(Math.abs(this.vx)) != 0){
+    this.attackCooldown--;
+    if(this.state_inAir){
+      if(this.vy > this.gravity * 5){
+        this.setAnimation("jumping_down");
+      }else if(this.vy < -this.gravity * 5){
+        this.setAnimation("jumping_up");
+      }else{
+        this.setAnimation("jumping_mid");
+
+      }
+    }
+    else if(Math.floor(Math.abs(this.vx)) != 0){
       this.setAnimation("walking")
     }else{
       this.setAnimation("standing")
@@ -154,12 +169,13 @@ class Player{
 
   checkForCollision(){
     noStroke()
-
     for(let j = 0; j < 4; j++){
       this.prevX = this.x;
       this.prevY = this.y;
       this.x += this.vx/4;
       this.y += this.vy/4;
+
+      let touchedWall = false;
   
       //the idea is to only check colision on the side were the velocity points because it cannot colide with walls if it is not moving in that direction
       let margin = colisionMargin;
@@ -177,7 +193,7 @@ class Player{
         if(this.map.checkIfSolidBlock(this.x + xCheckCord, this.y + i * (this.spriteHeight/this.colisionPointsHeight))){
           this.x = this.prevX;
           this.vx = 0;
-          this.state_inAir = false;
+          touchedWall = true;
           break;
         }
       }
@@ -188,12 +204,36 @@ class Player{
           this.y = this.prevY;
           this.vy = 0;
           this.state_canJump = true;
-          this.state_inAir = false;
+          touchedWall = true;
           break;
         }
       }
-      this.state_inAir = true;
+      if(touchedWall){
+        this.state_inAir = false;
+        this.x += (4 - j) * this.vx/4;
+        this.y += (4 - j) * this.vy/4;
+        break;
+      }else{
+        this.state_inAir = true;
+      }
     }
-
+  }
+  
+  attack(){
+    if(this.attackCooldown > 0){
+      return;
+    }else{
+      let attackWidth = 100;
+      let attackHeight = this.spriteHeight;
+      let attackX;
+      let attackY = this.y;
+      if(this.facingRight){
+        attackX = this.x + this.spriteWidth;
+      }else{
+        attackX = this.x - attackWidth;
+      }
+      this.map.addHurtBox(attackX,attackY, attackWidth, attackHeight, 10);
+      this.attackCooldown = 20;
+    }
   }
 }
