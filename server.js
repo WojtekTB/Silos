@@ -22,7 +22,7 @@ io.on('connection', (socket) => {
     socket.on('newPlayer', (data) => {
         console.log(`New player with id: ${data.id}`);
         players.push(data);
-        socket.broadcast.emit("newMessage", { newMessage: `USER WITH ID ${data.id} HAS JOINED THE GAME.`, id: `SYSTEM` });
+        socket.broadcast.emit("newMessage", { newMessage: `USER ${data.id} HAS JOINED THE GAME.`, id: `SYSTEM` });
     });
 
     socket.on("playerUpdate", (data) => {
