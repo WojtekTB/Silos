@@ -14,6 +14,7 @@ var socket = require('socket.io');
 var io = socket(server);
 
 var players = [];
+var chat = [];
 
 io.on('connection', (socket) => {
     console.log(`New connection: ${socket.id}`);
@@ -21,6 +22,7 @@ io.on('connection', (socket) => {
     socket.on('newPlayer', (data) => {
         console.log(`New player with id: ${data.id}`);
         players.push(data);
+        socket.broadcast.emit("newMessage", { newMessage: `USER WITH ID ${data.id} HAS JOINED THE GAME.`, id: `SYSTEM` });
     });
 
     socket.on("playerUpdate", (data) => {
@@ -30,7 +32,7 @@ io.on('connection', (socket) => {
                 return;
             }
         }
-        players.push(data);//if didn't find player in list, assume it is a new player
+        // players.push(data);//if didn't find player in list, assume it is a new player
         console.log(`Player with id ${data.id} tried to update but was not found in player list`);
     });
 
@@ -46,9 +48,13 @@ io.on('connection', (socket) => {
         console.log(`User with id ${data.id} tried to disconnect but there was no record of them ever being connected?`);
     });
 
+    socket.on("newMessage", (data) => {
+        chat.push({ message: data.newMessage, id: data.id });
+        socket.broadcast.emit("newMessage", { newMessage: data.newMessage, id: data.id });
+    });
+
     setInterval(() => {
         socket.broadcast.emit('playerList', { playerList: players });
     }, 60 / 1000);//60 times per second, as in per frame
-
 });
 

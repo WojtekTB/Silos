@@ -36,7 +36,7 @@ var playerList = [
 var allAnimations = [];
 
 var defaultKeyPressed = () => {
-  if(key == "Enter"){
+  if (key == "Enter") {
     chatBox.makeActive();
   }
   if (key == "z") {
@@ -132,7 +132,7 @@ function setup() {
   if (multiplayer) {
     //socket.io code
     uniqueUserId = Math.random().toString(36).substring(7);//generate a 7 character random id
-    socket = io.connect("https://" + window.location.host, { secure: true });
+    socket = io.connect("http://" + window.location.host, { secure: true });
     socket.emit("newPlayer", {
       id: uniqueUserId,
       x: player.x,
@@ -147,6 +147,13 @@ function setup() {
         if (playerList[i].id === data.id) {
           playerList.splice(i, 1);
         }
+      }
+    });
+    socket.on("newMessage", (data) => {
+      if (data.newMessage === chatBox.chatLog.slice(0, -1)) {
+        return;
+      } else {
+        chatBox.addEntry(data.id, data.newMessage);
       }
     });
   }
@@ -169,7 +176,7 @@ function draw() {
   player.show();
   mainMap.showEffects();
   chatBox.show();
-  if(debugMode){
+  if (debugMode) {
     showDebug();
   }
   if (multiplayer) {
