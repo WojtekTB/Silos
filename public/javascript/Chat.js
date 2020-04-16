@@ -1,7 +1,7 @@
 class Chat {
     constructor() {
         this.chatLog = [];
-        this.maxEntries = 5;
+        this.maxEntries = 6;
         this.opacityCounter = 0;
         this.activeField = "";
         this.active = false;

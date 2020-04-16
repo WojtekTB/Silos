@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
                 players.splice(i, 1);
                 console.log(`User with id ${data.id} has been disconnected from the server and removed from the player list`);
                 socket.broadcast.emit("removePlayer", { id: data.id });//tell other players to remove the player that disconnected
+                socket.broadcast.emit("newMessage", { newMessage: `USER ${data.id} HAS LEFT THE GAME.`, id: `SYSTEM` });
                 return;
             }
         }
