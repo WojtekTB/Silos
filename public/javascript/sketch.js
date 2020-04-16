@@ -3,17 +3,12 @@ var screenY = innerHeight;
 var paused = false;
 
 var player;
-var playerHud;
-var map1;
-var map2;
+var mainMap;
 var mapScale = 50;
 var animations = {};
-var testNPC;
-var stageBuilder;
-// var shield;
-var shieldAnimation = [];
-var playerDialogueBoxImage;
-var StageBuilderMode = false;
+var chatBox;
+
+var debugMode;
 
 var blockImages = {
   brick: null,
@@ -40,6 +35,19 @@ var playerList = [
 ];
 var allAnimations = [];
 
+var defaultKeyPressed = () => {
+  if(key == "Enter"){
+    chatBox.makeActive();
+  }
+  if (key == "z") {
+    testNPC = new NPC(player.x, player.y - 10, [], [], player);
+  }
+  if (key == "p") {
+    debugMode = !debugMode;
+
+  }
+}
+
 var mapTiles = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -52,8 +60,8 @@ var mapTiles = [
   [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
   [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
   [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
-  [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
-  [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 6, 7, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
+  [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
+  [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
   [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
   [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
   [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
@@ -102,21 +110,14 @@ function preload() {
   animations.jumping_down = [loadImage("assets/jump.sprite/jump_down.png")];
   animations.attack = [loadImage("assets/basic_attack.sprite/basic_attack.png")];
 
-  for (let i = 1; i < 10; i++) {
-    //load walking anim
-    shieldAnimation.push(
-      loadImage("assets/shield.sprite/shieldO000" + i + ".png")
-    );
-  }
-  // animationsAndInstructions[3] = shieldAnimation;
-  // animationsAndInstructions[4] = loadImage("assets/textboxes/textbox_main.png");
-
 }
 
 function setup() {
+  debugMode = false;
   createCanvas(screenX, screenY);
-  map2 = new Map(mapTiles, blockImages, mapScale);
-  player = new Player(map2.scale, map2.scale * 2, map2);
+  mainMap = new Map(mapTiles, blockImages, mapScale);
+  player = new Player(mainMap.scale, mainMap.scale * 2, mainMap);
+  chatBox = new Chat();
   createAnimation("standing", animations.standing, 0.3);
   createAnimation("walking", animations.walking, 0.5);
   createAnimation("crouching", animations.crouching, 1);
@@ -126,10 +127,7 @@ function setup() {
   player.initiateAllAnimations(allAnimations);
   player.setAnimation("standing");
 
-  playerHud = new PlayerHud(player);
-  if (StageBuilderMode) {
-    stageBuilder = new StageBuilder(map2);
-  }
+  keyPressed = defaultKeyPressed;
 
   if (multiplayer) {
     //socket.io code
@@ -157,7 +155,7 @@ function setup() {
 
 function draw() {
   background(70);
-  map2.show();
+  mainMap.show();
   if (multiplayer) {
     for (let player of playerList) {
       if (player.id === uniqueUserId) {
@@ -169,31 +167,18 @@ function draw() {
     }
   }
   player.show();
-  map2.showEffects();
-  showDebug();
+  mainMap.showEffects();
+  chatBox.show();
+  if(debugMode){
+    showDebug();
+  }
   if (multiplayer) {
     sendStateToServer();
   }
 }
 
-function keyPressed() {
-  // if (key == ' ') {
-  //   player.jump();
-  // }
-  if (key == "z") {
-    testNPC = new NPC(player.x, player.y - 10, [], [], player);
-  }
-  if (key == "p") {
-    player.translate(-100, 0);
-    map1.translate(-100, 0);
-  } else if (key == "o") {
-    player.translate(100, 0);
-    map1.translate(100, 0);
-  }
-}
-
 function showDebug() {
-  textAlign(LEFT);
+  textAlign(RIGHT);
   stroke(0);
   fill(255, 255, 255);
   text(`
@@ -202,9 +187,9 @@ function showDebug() {
   VX: ${player.vx}
   VY: ${player.vy}
   Animation: ${player.animationState}
-  Blocks shown: ${map2.numOfBlocksShow}
+  Blocks shown: ${mainMap.numOfBlocksShow}
   User id: ${uniqueUserId}
-  `, 0, 0, 200, 200);
+  `, screenX - 5, 0);
   // rect(0, 0, 200, 200);
 }
 
@@ -224,8 +209,8 @@ function showPlayer(otherUser) {
   if (playerAnimation === null) {
     throw `Animation with key ${otherUser.animationState} was not found`;
   }
-  let translateToX = otherUser.x + map2.xoffset;
-  let translateToY = otherUser.y + map2.yoffset;
+  let translateToX = otherUser.x + mainMap.xoffset;
+  let translateToY = otherUser.y + mainMap.yoffset;
 
   let spriteW = player.spriteWidth;
   let spriteH = player.spriteHeight;
