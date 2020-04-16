@@ -134,7 +134,7 @@ function setup() {
   if (multiplayer) {
     //socket.io code
     uniqueUserId = Math.random().toString(36).substring(7);//generate a 7 character random id
-    socket = io.connect("http://" + window.location.host, { secure: true });
+    socket = io.connect("https://" + window.location.host, { secure: true });
     socket.emit("newPlayer", {
       id: uniqueUserId,
       x: player.x,
