@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprite sheet</title>
+
+    <style>
+        /* #mainCanvas {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }  */
+    
+        body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+        }
+    
+        canvas {
+          margin: auto;
+        }
+      </style>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+  <script src="./sketch.js"></script>
+</body>
+<button onclick="trySaving()" style="float: right;">Download</button>
+<script>
+    trySaving = () => {
+        let name = prompt("<your file name>_spreadsheet.png\n<your file name>_spreadsheet.json");
+        saveCanvas(name + "_spreadsheet", 'png');
+        console.log(dict);
+        saveJSON(dict, name + "_spreadsheet.json")
+      }
+      
+      </script>
+</html>
