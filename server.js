@@ -1,5 +1,5 @@
 var express = require('express');
-var fs = require('fs');
+// var fs = require('fs');
 var port = process.env.PORT || 3000;
 var app = express();
 var server = app.listen(port);
@@ -18,7 +18,7 @@ var chat = [];
 
 io.on('connection', (socket) => {
     console.log(`New connection: ${socket.id}`);
-    fs.writeFile("users.txt", `A user joined at ${new Date()}`);
+    // fs.writeFile("users.txt", `A user joined at ${new Date()}`);
 
     socket.on('newPlayer', (data) => {
         console.log(`New player with id: ${data.id}`);
