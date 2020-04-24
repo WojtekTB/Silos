@@ -88,20 +88,20 @@ function preload() {
   animations.jumping_mid = [];
   animations.jumping_down = [];
   animations.attack = [];
-  for (let i = 1; i < 12; i++) {//load idle anim
+  for (let i = 0; i < 11; i++) {//load idle anim
     if (i > 9) {
-      animations.standing.push(loadImage("assets/idle.sprite/idle00" + i + ".png"));
+      animations.standing.push(loadImage("assets/idle.sprite/idle" + i + ".png"));
     }
     else {
-      animations.standing.push(loadImage("assets/idle.sprite/idle000" + i + ".png"));
+      animations.standing.push(loadImage("assets/idle.sprite/idle0" + i + ".png"));
     }
   }
-  for (let i = 1; i < 17; i++) {//load walking anim
+  for (let i = 0; i < 16; i++) {//load walking anim
     if (i > 9) {
-      animations.walking.push(loadImage("assets/walk.sprite/walking00" + i + ".png"));
+      animations.walking.push(loadImage("assets/walk.sprite/walking" + i + ".png"));
     }
     else {
-      animations.walking.push(loadImage("assets/walk.sprite/walking000" + i + ".png"));
+      animations.walking.push(loadImage("assets/walk.sprite/walking0" + i + ".png"));
     }
   }
   animations.crouching = [loadImage("assets/crouch.sprite/crouch.png")];
