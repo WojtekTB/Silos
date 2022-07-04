@@ -112,9 +112,9 @@ class Player {
     } else {
       this.state_crouch = false;
     }
-    if (keyIsDown("A".charCodeAt())) {
-      this.attack();
-    }
+    // if (keyIsDown("A".charCodeAt())) {
+    //   this.attack();
+    // }
   }
 
   jump() {
