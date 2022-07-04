@@ -24,7 +24,7 @@ class Player {
     this.vy = 0;
     this.decayRate = 0.9;
     this.movementSpeed = 1;
-    this.gravity = 1;
+    this.gravity = 0.7;
     this.jumpMagnitude = 20;
     //colision vars
     this.colisionPointsWidth = 2 + Math.floor(this.spriteWidth / this.map.scale);//how many collision points you need on bottom and top
