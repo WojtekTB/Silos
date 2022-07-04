@@ -21,6 +21,13 @@
     canvas {
       margin: auto;
     }
+    .menu {
+    display: none;   
+    }
+
+    .menu.opened {
+        display: block;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
@@ -38,8 +45,25 @@
   <script src="./javascript/Dialogue.js"></script>
   <script src="./javascript/HurtBox.js"></script>
 </head>
-
 <body>
+  <div style="position: absolute; bottom: 0; left: 10px; background-color: white; padding: 4px;">
+    <a href="" class="open-menu">What are the controls?</a>
+    <nav class="menu">
+      <ul>
+          <li>Arrow keys - movement</li>
+          <li>Enter - open/close chat</li>
+      </ul>
+    </nav>
+  </div>
+  
 </body>
+<script>
+  var openMenuBtn = document.getElementsByClassName('open-menu')[0],
+  menu = document.getElementsByClassName('menu')[0];
 
+  openMenuBtn.addEventListener('click', function ( e ) {
+      e.preventDefault();
+      menu.classList.toggle('opened');
+  }, false);
+</script>
 </html>
